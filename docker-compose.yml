@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  db:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: 123
+      MARIADB_DATABASE: recruit
+    volumes:
+      - viva-recruit:/var/lib/mysql
+    ports:
+      - 3306:3306 
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+
+volumes:
+  viva-recruit:
