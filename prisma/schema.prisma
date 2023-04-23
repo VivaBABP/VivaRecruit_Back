@@ -10,8 +10,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  password String
+model Account {
+  id               Int             @id @default(autoincrement())
+  email            String          @unique
+  password         String
+  name             String
+  lastName         String
+  phoneNumber      String          @unique
+  lastDiploma      String
+  hr               Boolean
+  cv               Bytes           @db.Blob()
+  interests        Interests[]
+  profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
+  profileTypeId    Int?
+  JobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+  jobDescriptionId Int?
+}
+
+model ProfileType {
+  id          Int       @id @default(autoincrement())
+  label       String
+  description String
+  Account     Account[]
+}
+
+model JobDescription {
+  id             Int       @id @default(autoincrement())
+  jobName        String
+  jobDescription String
+  skills         String
+  idAccount      Account[]
+}
+
+model Interests {
+  id            Int      @id @default(autoincrement())
+  labelInterest String
+  Account       Account? @relation(fields: [accountId], references: [id])
+  accountId     Int?
+  Panel         Panel?   @relation(fields: [panelId], references: [id])
+  panelId       Int?
+}
+
+model Panel {
+  id        Int         @id @default(autoincrement())
+  namePanel String
+  interest  Interests[]
 }
