@@ -34,10 +34,10 @@ export class AuthController {
     return await this.authService.generateToken(req.user);
   }
 
+  @UseGuards(JwtGuard)
   @ApiOkResponse({
     type: String,
   })
-  @UseGuards(JwtGuard)
   @Get('test')
   async test(): Promise<string> {
     return 'ça marche';
