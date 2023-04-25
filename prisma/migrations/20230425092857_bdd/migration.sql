@@ -3,6 +3,7 @@ CREATE TABLE `Account` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
+    `refreshToken` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
     `lastName` VARCHAR(191) NULL,
     `phoneNumber` VARCHAR(191) NULL,
