@@ -3,12 +3,12 @@ CREATE TABLE `Account` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `lastName` VARCHAR(191) NOT NULL,
-    `phoneNumber` VARCHAR(191) NOT NULL,
-    `lastDiploma` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NULL,
+    `lastName` VARCHAR(191) NULL,
+    `phoneNumber` VARCHAR(191) NULL,
+    `lastDiploma` VARCHAR(191) NULL,
     `hr` BOOLEAN NOT NULL,
-    `cv` BLOB NOT NULL,
+    `cv` BLOB NULL,
     `profileTypeId` INTEGER NULL,
     `jobDescriptionId` INTEGER NULL,
 
@@ -31,7 +31,7 @@ CREATE TABLE `JobDescription` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `jobName` VARCHAR(191) NOT NULL,
     `jobDescription` VARCHAR(191) NOT NULL,
-    `skills` VARCHAR(191) NOT NULL,
+    `skills` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

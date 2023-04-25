@@ -6,4 +6,7 @@ export default class CreateUserDTO {
 
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  recruit: boolean;
 }

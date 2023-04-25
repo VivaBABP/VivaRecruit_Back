@@ -7,8 +7,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signUp')
-  async register(@Body() createUser: CreateUserDTO): Promise<any> {
-    const result = await this.authService.register(createUser);
-    return result;
+  async register(@Body() createUser: CreateUserDTO): Promise<void> {
+    await this.authService.register(createUser);
   }
 }
