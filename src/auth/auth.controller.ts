@@ -1,13 +1,5 @@
 import { TokenDTO } from './dto/token.dto';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import CreateUserDTO from './dto/create-user.dto';
 import { JwtGuard } from 'src/jwt/guards/jwt.guard';
