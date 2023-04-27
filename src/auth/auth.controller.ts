@@ -1,5 +1,5 @@
 import { TokenDTO } from './dto/token.dto';
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import CreateUserDTO from './dto/create-user.dto';
 import { JwtGuard } from 'src/jwt/guards/jwt.guard';
@@ -43,6 +43,14 @@ export class AuthController {
   async test(): Promise<string> {
     return 'ça marche';
   }
+
+  @ApiOkResponse({
+    type: TokenDTO,
+  })
+  @ApiForbiddenResponse({
+    description: 'email introuvable ou Mot de passe incorrect',
+  })
+  @HttpCode(HttpStatus.OK)
   @Post('SignIn')
   async login(@Body() credential: CredentialDTO): Promise<TokenDTO> {
     return await this.authService.login(credential);
