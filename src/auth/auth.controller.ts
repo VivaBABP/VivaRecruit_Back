@@ -11,6 +11,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import CredentialDTO from './dto/credential.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -41,5 +42,9 @@ export class AuthController {
   @Get('test')
   async test(): Promise<string> {
     return 'ça marche';
+  }
+  @Post('SignIn')
+  async login(@Body() credential: CredentialDTO): Promise<TokenDTO> {
+    return await this.authService.login(credential);
   }
 }
