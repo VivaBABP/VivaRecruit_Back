@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { TokenDTO } from 'src/auth/dto/token.dto';
+import CredentialDTO from './dto/credential.dto';
 
 @Injectable()
 export class AuthService {
@@ -124,4 +125,28 @@ export class AuthService {
 
     return payload;
   }
+
+  async login(credential: CredentialDTO): Promise<TokenDTO> {
+    const query = await this.prisma.account.findFirst({
+      where: {
+        email: credential.email,
+      },
+    });
+
+    if (!query) {
+      throw new ForbiddenException('email introuvable');
+    }
+    const verifyPwd = await bcrypt.compare(credential.password, query.password)
+    if (!verifyPwd) {
+      throw new ForbiddenException('Mot de passe incorrect');
+    }
+    const payload: TokenPayload = {
+      sub: query.id,
+      email: query.email,
+      role: query.hr,
+    };
+    const result = await this.generateToken(payload);
+    return result;
+  }
+
 }
