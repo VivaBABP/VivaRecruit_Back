@@ -19,6 +19,7 @@ import {
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import CredentialDTO from './dto/credential.dto';
 
@@ -38,6 +39,12 @@ export class AuthController {
     return await this.authService.register(createUser);
   }
 
+  @ApiOkResponse({
+    type: TokenDTO,
+  })
+  @ApiForbiddenResponse()
+  @ApiUnauthorizedResponse()
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   async refresh(@Req() req: { user: TokenPayload }) {
