@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import CreateJobDTO from './dto/create-jobs.dto';
-import UpdateJobDTO from './dto/update-job.dto';
+// import UpdateJobDTO from './dto/update-job.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Jobs')
@@ -10,9 +10,9 @@ export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Post()
-  async createJob(@Body() createJob: CreateJobDTO): Promise<void> {
-    // return await this.jobsService.createJob(createJob);
-    await this.createJob(createJob);
+  async createJob(@Body() createJob: CreateJobDTO): Promise<string> {
+    await this.jobsService.createJob(createJob);
+    return '';
   }
 
   // @Patch(':id')
