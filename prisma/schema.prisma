@@ -24,8 +24,8 @@ model Account {
   interests        Interests[]
   profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
   profileTypeId    Int?
-  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
-  jobDescriptionId Int?
+  jobDescription   JobDescription[]
+  
 }
 
 model ProfileType {
@@ -40,7 +40,8 @@ model JobDescription {
   jobName        String
   jobDescription String
   skills         String?
-  account      Account[]
+  account        Account? @relation(fields: [accountId], references: [id])
+  accountId      Int?
 }
 
 model Interests {
