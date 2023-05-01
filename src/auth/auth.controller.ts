@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import CredentialDTO from './dto/credential.dto';
+import { ValidationCodeDTO } from './dto/validation-code.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -35,8 +36,16 @@ export class AuthController {
     description: 'compte déjà existant',
   })
   @Post('signUp')
-  async register(@Body() createUser: CreateUserDTO): Promise<TokenDTO> {
+  async register(@Body() createUser: CreateUserDTO): Promise<number> {
     return await this.authService.register(createUser);
+  }
+
+  @Post('validation')
+  async emailValidation(
+    @Body() validationCode: ValidationCodeDTO,
+  ): Promise<string> {
+    // return await this.authService.emailValidation(validationCode);
+    return 'aaa';
   }
 
   @ApiOkResponse({

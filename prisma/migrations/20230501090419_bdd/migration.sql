@@ -4,6 +4,8 @@ CREATE TABLE `Account` (
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `refreshToken` VARCHAR(191) NOT NULL,
+    `activate` BOOLEAN NOT NULL,
+    `codeActivate` VARCHAR(191) NULL,
     `name` VARCHAR(191) NULL,
     `lastName` VARCHAR(191) NULL,
     `phoneNumber` VARCHAR(191) NULL,
@@ -12,6 +14,7 @@ CREATE TABLE `Account` (
     `cv` BLOB NULL,
     `profileTypeId` INTEGER NULL,
     `jobDescriptionId` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Account_email_key`(`email`),
     UNIQUE INDEX `Account_phoneNumber_key`(`phoneNumber`),

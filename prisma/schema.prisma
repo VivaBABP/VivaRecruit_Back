@@ -15,17 +15,20 @@ model Account {
   email            String          @unique
   password         String
   refreshToken     String
+  activate         Boolean
+  codeActivate     Int?
   name             String?
   lastName         String?
-  phoneNumber      String?          @unique
+  phoneNumber      String?         @unique
   lastDiploma      String?
   hr               Boolean
-  cv               Bytes?           @db.Blob()
+  cv               Bytes?          @db.Blob()
   interests        Interests[]
   profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
   profileTypeId    Int?
   jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
   jobDescriptionId Int?
+  createdAt        DateTime        @default(now())
 }
 
 model ProfileType {
@@ -40,7 +43,7 @@ model JobDescription {
   jobName        String
   jobDescription String
   skills         String?
-  account      Account[]
+  account        Account[]
 }
 
 model Interests {

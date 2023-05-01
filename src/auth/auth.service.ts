@@ -1,4 +1,6 @@
+import { ValidationCodeDTO } from './dto/validation-code.dto';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -10,15 +12,17 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { TokenDTO } from 'src/auth/dto/token.dto';
 import CredentialDTO from './dto/credential.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
-  async register(createUser: CreateUserDTO): Promise<TokenDTO> {
+  async register(createUser: CreateUserDTO): Promise<number> {
     const query = await this.prisma.account.findFirst({
       where: {
         email: createUser.email,
@@ -34,22 +38,30 @@ export class AuthService {
       parseInt(process.env.SALT),
     );
 
+    const activationCode = Math.floor(Math.random() * 10000 + 1);
+
     const user = await this.prisma.account.create({
       data: {
         email: createUser.email,
         password: hashedPassword,
         hr: createUser.recruit,
-        refreshToken: 'salut',
+        refreshToken: '',
+        activate: false,
+        codeActivate: activationCode,
       },
     });
 
-    const payload: TokenPayload = {
-      sub: user.id,
-      email: user.email,
-      role: user.hr,
-    };
+    try {
+      await this.mailService.sendConfirmationCode(activationCode, user.email);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
 
-    return await this.generateToken(payload);
+    return user.id;
+  }
+
+  async emailValidation(validationCode: ValidationCodeDTO): Promise<any> {
+    return 'a';
   }
 
   async generateToken(payload: TokenPayload): Promise<TokenDTO> {
