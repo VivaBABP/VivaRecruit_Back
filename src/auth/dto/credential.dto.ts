@@ -9,5 +9,4 @@ export default class CredentialDTO {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
-
 }

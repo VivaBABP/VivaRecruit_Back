@@ -136,7 +136,7 @@ export class AuthService {
     if (!query) {
       throw new ForbiddenException('email introuvable');
     }
-    const verifyPwd = await bcrypt.compare(credential.password, query.password)
+    const verifyPwd = await bcrypt.compare(credential.password, query.password);
     if (!verifyPwd) {
       throw new ForbiddenException('Mot de passe incorrect');
     }
@@ -145,8 +145,6 @@ export class AuthService {
       email: query.email,
       role: query.hr,
     };
-    const result = await this.generateToken(payload);
-    return result;
+    return await this.generateToken(payload);
   }
-
 }
