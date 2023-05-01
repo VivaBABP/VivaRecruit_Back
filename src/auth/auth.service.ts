@@ -60,8 +60,38 @@ export class AuthService {
     return user.id;
   }
 
-  async emailValidation(validationCode: ValidationCodeDTO): Promise<any> {
-    return 'a';
+  async emailValidation(validationCode: ValidationCodeDTO): Promise<TokenDTO> {
+    const user = await this.prisma.account.findFirst({
+      where: {
+        id: validationCode.idUser,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException("ce compte n'existe pas");
+    } else if (user.activate) {
+      throw new ForbiddenException('compte déjà activer');
+    } else if (user.codeActivate != validationCode.code) {
+      throw new ForbiddenException('Code incorrect');
+    }
+
+    await this.prisma.account.update({
+      data: {
+        codeActivate: null,
+        activate: true,
+      },
+      where: {
+        id: validationCode.idUser,
+      },
+    });
+
+    const payload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.hr,
+    };
+
+    return await this.generateToken(payload);
   }
 
   async generateToken(payload: TokenPayload): Promise<TokenDTO> {

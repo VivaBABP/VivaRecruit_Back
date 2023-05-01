@@ -43,9 +43,8 @@ export class AuthController {
   @Post('validation')
   async emailValidation(
     @Body() validationCode: ValidationCodeDTO,
-  ): Promise<string> {
-    // return await this.authService.emailValidation(validationCode);
-    return 'aaa';
+  ): Promise<TokenDTO> {
+    return await this.authService.emailValidation(validationCode);
   }
 
   @ApiOkResponse({
