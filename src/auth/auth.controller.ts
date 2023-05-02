@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import CredentialDTO from './dto/credential.dto';
+import { GetJwt } from 'src/jwt/get-jwt.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -56,8 +57,8 @@ export class AuthController {
     type: String,
   })
   @Get('test')
-  async test(): Promise<string> {
-    return 'ça marche';
+  async test(@GetJwt() user: TokenPayload): Promise<any> {
+    return user;
   }
 
   @ApiOkResponse({
