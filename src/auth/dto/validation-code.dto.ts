@@ -5,6 +5,7 @@ export class ValidationCodeDTO {
   @ApiProperty()
   @IsNotEmpty()
   idUser: number;
+  @ApiProperty()
   @IsNotEmpty()
   code: number;
 }

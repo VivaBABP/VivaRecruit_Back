@@ -29,9 +29,7 @@ import { ValidationCodeDTO } from './dto/validation-code.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiCreatedResponse({
-    type: TokenDTO,
-  })
+  @ApiCreatedResponse()
   @ApiForbiddenResponse({
     description: 'compte déjà existant',
   })
@@ -40,6 +38,11 @@ export class AuthController {
     return await this.authService.register(createUser);
   }
 
+  @ApiOkResponse({
+    type: TokenDTO,
+  })
+  @ApiForbiddenResponse()
+  @HttpCode(HttpStatus.OK)
   @Post('validation')
   async emailValidation(
     @Body() validationCode: ValidationCodeDTO,
