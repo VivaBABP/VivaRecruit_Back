@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import CredentialDTO from './dto/credential.dto';
+import { ValidationCodeDTO } from './dto/validation-code.dto';
 import { GetJwt } from 'src/jwt/get-jwt.decorator';
 
 @ApiTags('auth')
@@ -29,15 +30,25 @@ import { GetJwt } from 'src/jwt/get-jwt.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiCreatedResponse({
-    type: TokenDTO,
-  })
+  @ApiCreatedResponse()
   @ApiForbiddenResponse({
     description: 'compte déjà existant',
   })
   @Post('signUp')
-  async register(@Body() createUser: CreateUserDTO): Promise<TokenDTO> {
+  async register(@Body() createUser: CreateUserDTO): Promise<number> {
     return await this.authService.register(createUser);
+  }
+
+  @ApiOkResponse({
+    type: TokenDTO,
+  })
+  @ApiForbiddenResponse()
+  @HttpCode(HttpStatus.OK)
+  @Post('validation')
+  async emailValidation(
+    @Body() validationCode: ValidationCodeDTO,
+  ): Promise<TokenDTO> {
+    return await this.authService.emailValidation(validationCode);
   }
 
   @ApiOkResponse({

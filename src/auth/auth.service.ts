@@ -1,4 +1,6 @@
+import { ValidationCodeDTO } from './dto/validation-code.dto';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -10,15 +12,19 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { TokenDTO } from 'src/auth/dto/token.dto';
 import CredentialDTO from './dto/credential.dto';
+import { MailService } from 'src/mail/mail.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
-  async register(createUser: CreateUserDTO): Promise<TokenDTO> {
+  async register(createUser: CreateUserDTO): Promise<number> {
     const query = await this.prisma.account.findFirst({
       where: {
         email: createUser.email,
@@ -34,12 +40,54 @@ export class AuthService {
       parseInt(process.env.SALT),
     );
 
+    const activationCode = Math.floor(Math.random() * 10000 + 1);
+
+    const test = new Date();
+    test.setDate(test.getDate() - 1);
+
     const user = await this.prisma.account.create({
       data: {
         email: createUser.email,
         password: hashedPassword,
         hr: createUser.recruit,
         refreshToken: '',
+        activate: false,
+        codeActivate: activationCode,
+        createdAt: test,
+      },
+    });
+
+    try {
+      await this.mailService.sendConfirmationCode(activationCode, user.email);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+
+    return user.id;
+  }
+
+  async emailValidation(validationCode: ValidationCodeDTO): Promise<TokenDTO> {
+    const user = await this.prisma.account.findFirst({
+      where: {
+        id: validationCode.idUser,
+      },
+    });
+
+    if (!user) {
+      throw new ForbiddenException("ce compte n'existe pas");
+    } else if (user.activate) {
+      throw new ForbiddenException('Compte déjà activé');
+    } else if (user.codeActivate != validationCode.code) {
+      throw new ForbiddenException('Code incorrect');
+    }
+
+    await this.prisma.account.update({
+      data: {
+        codeActivate: null,
+        activate: true,
+      },
+      where: {
+        id: validationCode.idUser,
       },
     });
 
@@ -146,5 +194,23 @@ export class AuthService {
       role: query.hr,
     };
     return await this.generateToken(payload);
+  }
+
+  @Cron(CronExpression.EVERY_12_HOURS)
+  async deleteDesactivateAccount(): Promise<void> {
+    const users = await this.prisma.account.findMany();
+
+    users.forEach(async (u) => {
+      const userDate = dayjs(u.createdAt).startOf('day');
+      const today = dayjs().startOf('day');
+
+      if (today > userDate && !u.activate) {
+        await this.prisma.account.delete({
+          where: {
+            id: u.id,
+          },
+        });
+      }
+    });
   }
 }
