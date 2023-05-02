@@ -11,10 +11,10 @@ export class JobsController {
 
   @Post()
   async createJob(@Body() createJob: CreateJobDTO): Promise<void> {
-    // return await this.jobsService.createJob(createJob);
-    await this.createJob(createJob);
+    return await this.jobsService.createJob(createJob);
   }
 
+  //A finir quand on pourra récupérer le Token
   // @Patch(':id')
   // async updateJob(@Body() updateJob: UpdateJobDTO): Promise<string> {
   //   // return await this.jobsService.createJob(createJob);

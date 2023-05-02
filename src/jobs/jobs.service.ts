@@ -18,6 +18,7 @@ export class JobsService {
     });
   }
 
+  //A finir quand on pourra récupérer le Token
   // async updateJob(updateJob: UpdateJobDTO): Promise<any> {
   //   await this.prisma.jobDescription.update({
   //     where: {
