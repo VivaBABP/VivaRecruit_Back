@@ -39,7 +39,7 @@ export class AuthService {
         email: createUser.email,
         password: hashedPassword,
         hr: createUser.recruit,
-        refreshToken: 'salut',
+        refreshToken: '',
       },
     });
 
