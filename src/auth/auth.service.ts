@@ -13,6 +13,8 @@ import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { TokenDTO } from 'src/auth/dto/token.dto';
 import CredentialDTO from './dto/credential.dto';
 import { MailService } from 'src/mail/mail.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +42,9 @@ export class AuthService {
 
     const activationCode = Math.floor(Math.random() * 10000 + 1);
 
+    const test = new Date();
+    test.setDate(test.getDate() - 1);
+
     const user = await this.prisma.account.create({
       data: {
         email: createUser.email,
@@ -48,6 +53,7 @@ export class AuthService {
         refreshToken: '',
         activate: false,
         codeActivate: activationCode,
+        createdAt: test,
       },
     });
 
@@ -189,5 +195,23 @@ export class AuthService {
     };
     const result = await this.generateToken(payload);
     return result;
+  }
+
+  @Cron(CronExpression.EVERY_12_HOURS)
+  async deleteDesactivateAccount(): Promise<void> {
+    const users = await this.prisma.account.findMany();
+
+    users.forEach(async (u) => {
+      const userDate = dayjs(u.createdAt).startOf('day');
+      const today = dayjs().startOf('day');
+
+      if (today > userDate && !u.activate) {
+        await this.prisma.account.delete({
+          where: {
+            id: u.id,
+          },
+        });
+      }
+    });
   }
 }
