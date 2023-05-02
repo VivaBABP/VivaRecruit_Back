@@ -76,7 +76,7 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException("ce compte n'existe pas");
     } else if (user.activate) {
-      throw new ForbiddenException('compte déjà activer');
+      throw new ForbiddenException('Compte déjà activé');
     } else if (user.codeActivate != validationCode.code) {
       throw new ForbiddenException('Code incorrect');
     }
