@@ -193,8 +193,7 @@ export class AuthService {
       email: query.email,
       role: query.hr,
     };
-    const result = await this.generateToken(payload);
-    return result;
+    return await this.generateToken(payload);
   }
 
   @Cron(CronExpression.EVERY_12_HOURS)
