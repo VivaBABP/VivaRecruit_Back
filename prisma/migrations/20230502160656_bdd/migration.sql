@@ -5,7 +5,7 @@ CREATE TABLE `Account` (
     `password` VARCHAR(191) NOT NULL,
     `refreshToken` VARCHAR(191) NOT NULL,
     `activate` BOOLEAN NOT NULL,
-    `codeActivate` VARCHAR(191) NULL,
+    `codeActivate` INTEGER NULL,
     `name` VARCHAR(191) NULL,
     `lastName` VARCHAR(191) NULL,
     `phoneNumber` VARCHAR(191) NULL,
@@ -13,7 +13,6 @@ CREATE TABLE `Account` (
     `hr` BOOLEAN NOT NULL,
     `cv` BLOB NULL,
     `profileTypeId` INTEGER NULL,
-    `jobDescriptionId` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Account_email_key`(`email`),
@@ -36,6 +35,7 @@ CREATE TABLE `JobDescription` (
     `jobName` VARCHAR(191) NOT NULL,
     `jobDescription` VARCHAR(191) NOT NULL,
     `skills` VARCHAR(191) NULL,
+    `accountId` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -62,7 +62,7 @@ CREATE TABLE `Panel` (
 ALTER TABLE `Account` ADD CONSTRAINT `Account_profileTypeId_fkey` FOREIGN KEY (`profileTypeId`) REFERENCES `ProfileType`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Account` ADD CONSTRAINT `Account_jobDescriptionId_fkey` FOREIGN KEY (`jobDescriptionId`) REFERENCES `JobDescription`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `JobDescription` ADD CONSTRAINT `JobDescription_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Account`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Interests` ADD CONSTRAINT `Interests_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Account`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

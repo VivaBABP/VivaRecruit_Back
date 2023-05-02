@@ -27,6 +27,7 @@ model Account {
   profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
   profileTypeId    Int?
   jobDescription   JobDescription[]
+  createdAt        DateTime        @default(now())
   
 }
 
