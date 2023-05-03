@@ -14,7 +14,9 @@ import { TokenDTO } from 'src/auth/dto/token.dto';
 import CredentialDTO from './dto/credential.dto';
 import { MailService } from 'src/mail/mail.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
+import { Account } from '@prisma/client';
+import { ChangeForgotPasswordDTO } from './dto/change-forgot-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,16 +26,36 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async register(createUser: CreateUserDTO): Promise<number> {
+  private async verifyIfUserExist(email: string): Promise<Account> {
     const query = await this.prisma.account.findFirst({
       where: {
-        email: createUser.email,
+        email: email,
       },
     });
 
     if (query) {
-      throw new ForbiddenException('compte déjà existant');
+      throw new UnauthorizedException('compte déjà existant');
     }
+
+    return query;
+  }
+
+  private async verifyIfUserDontExist(email: string): Promise<Account> {
+    const query = await this.prisma.account.findFirst({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!query) {
+      throw new UnauthorizedException("le Compte n'existe pas");
+    }
+
+    return query;
+  }
+
+  async register(createUser: CreateUserDTO): Promise<void> {
+    await this.verifyIfUserExist(createUser.email);
 
     const hashedPassword = await bcrypt.hash(
       createUser.password,
@@ -41,9 +63,6 @@ export class AuthService {
     );
 
     const activationCode = Math.floor(Math.random() * 10000 + 1);
-
-    const test = new Date();
-    test.setDate(test.getDate() - 1);
 
     const user = await this.prisma.account.create({
       data: {
@@ -53,7 +72,6 @@ export class AuthService {
         refreshToken: '',
         activate: false,
         codeActivate: activationCode,
-        createdAt: test,
       },
     });
 
@@ -62,8 +80,6 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException(error);
     }
-
-    return user.id;
   }
 
   async emailValidation(validationCode: ValidationCodeDTO): Promise<TokenDTO> {
@@ -133,6 +149,7 @@ export class AuthService {
     await this.prisma.account.update({
       data: {
         refreshToken: refreshTokenHashed,
+        codeActivate: null,
       },
       where: {
         id: payload.sub,
@@ -175,15 +192,8 @@ export class AuthService {
   }
 
   async login(credential: CredentialDTO): Promise<TokenDTO> {
-    const query = await this.prisma.account.findFirst({
-      where: {
-        email: credential.email,
-      },
-    });
+    const query = await this.verifyIfUserExist(credential.email);
 
-    if (!query) {
-      throw new ForbiddenException('email introuvable');
-    }
     const verifyPwd = await bcrypt.compare(credential.password, query.password);
     if (!verifyPwd) {
       throw new ForbiddenException('Mot de passe incorrect');
@@ -194,6 +204,27 @@ export class AuthService {
       role: query.hr,
     };
     return await this.generateToken(payload);
+  }
+
+  async sendEmailForgotPassword(email: string): Promise<void> {
+    const query = await this.verifyIfUserDontExist(email);
+
+    if (!query.activate) {
+      throw new ForbiddenException('Compte non activé');
+    }
+
+    const activationCode = Math.floor(Math.random() * 10000 + 1);
+
+    await this.prisma.account.update({
+      data: {
+        codeActivate: activationCode,
+      },
+      where: {
+        email: email,
+      },
+    });
+
+    await this.mailService.sendEmailForgotPassword(activationCode, email);
   }
 
   @Cron(CronExpression.EVERY_12_HOURS)

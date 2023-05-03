@@ -24,6 +24,7 @@ import {
 import CredentialDTO from './dto/credential.dto';
 import { ValidationCodeDTO } from './dto/validation-code.dto';
 import { GetJwt } from 'src/jwt/get-jwt.decorator';
+import { EmailDTO } from './dto/email.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -35,8 +36,8 @@ export class AuthController {
     description: 'compte déjà existant',
   })
   @Post('signUp')
-  async register(@Body() createUser: CreateUserDTO): Promise<number> {
-    return await this.authService.register(createUser);
+  async register(@Body() createUser: CreateUserDTO): Promise<void> {
+    await this.authService.register(createUser);
   }
 
   @ApiOkResponse({
@@ -82,5 +83,14 @@ export class AuthController {
   @Post('SignIn')
   async login(@Body() credential: CredentialDTO): Promise<TokenDTO> {
     return await this.authService.login(credential);
+  }
+
+  @ApiOkResponse()
+  @ApiForbiddenResponse()
+  @ApiUnauthorizedResponse()
+  @HttpCode(HttpStatus.OK)
+  @Post('Forget')
+  async sendEmailForgotPassword(@Body() email: EmailDTO): Promise<void> {
+    await this.authService.sendEmailForgotPassword(email.email);
   }
 }
