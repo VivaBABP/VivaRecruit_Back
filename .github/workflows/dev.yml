@@ -3,7 +3,7 @@ name: Deploy_Dev
 on:
   push:
     branches:
-    - feature/deploiement
+    - develop
 
 jobs:        
 
