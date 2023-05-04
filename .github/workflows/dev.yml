@@ -69,7 +69,7 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd vivarecruitdev/
-          source source /home/pari0012/nodevenv/vivarecruitdev/16/bin/activate
+          source /home/pari0012/nodevenv/vivarecruitdev/16/bin/activate
           rm -rf node_modules/*
           npm install
           npx prisma generate
