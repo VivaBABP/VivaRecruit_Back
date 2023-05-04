@@ -1,0 +1,79 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+    - feature/deploiement
+  
+jobs:        
+    
+  Deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Copy repository
+      uses: actions/checkout@v3
+      
+    - run: rm .env  
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.5.2
+      with:
+        node-version: '16'
+        architecture: 'x64'
+        
+    - run: npm install
+    - run: npm run build
+    
+    - run: mkdir server
+    
+    - run: cp -R dist server
+        
+    - name: copy package.json
+      uses: canastro/copy-file-action@master
+      with:
+        source: "package.json"
+        target: "server/package.json"
+        
+    - run: cp -R prisma server
+        
+    - name: stop server
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        sync: true
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          /usr/sbin/cloudlinux-selector stop --json --interpreter=nodejs --app-root=/home/pari0012/vivarecruitdev/
+        
+    - name: deploy file
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        username: ${{ secrets.USERNAME }}
+        server: ${{ secrets.HOST }}
+        ssh_private_key: ${{ secrets.KEY }}
+        port: 5022
+        local_path: './server/*'
+        remote_path: /home/pari0012/vivarecruitdev/
+        sftpArgs: '-o ConnectTimeout=5'
+    
+    - name: run server
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        sync: true
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd vivarecruitdev/
+          source source /home/pari0012/nodevenv/vivarecruitdev/16/bin/activate
+          rm -rf node_modules/*
+          npm install
+          npx prisma generate
+          cd node_modules/.prisma/client/
+          rm libquery_engine-debian-openssl-1.0.x.so.node
+          mv libquery_engine-rhel-openssl-1.0.x.so.node libquery_engine-debian-openssl-1.1.x.so.node
+          /usr/sbin/cloudlinux-selector start --json --interpreter=nodejs --app-root=/home/pari0012/vivarecruitdev/
