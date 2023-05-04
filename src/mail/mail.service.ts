@@ -15,4 +15,15 @@ export class MailService {
       },
     });
   }
+
+  async sendEmailForgotPassword(code: number, email: string): Promise<void> {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Mot de passe oublié "VivaRecruit"',
+      template: './forgot-password',
+      context: {
+        code,
+      },
+    });
+  }
 }

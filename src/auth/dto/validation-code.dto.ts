@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Max, Min } from 'class-validator';
 
 export class ValidationCodeDTO {
   @ApiProperty()
@@ -7,5 +7,7 @@ export class ValidationCodeDTO {
   idUser: number;
   @ApiProperty()
   @IsNotEmpty()
+  @Min(1)
+  @Max(4)
   code: number;
 }
