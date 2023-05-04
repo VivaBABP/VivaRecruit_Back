@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -25,6 +26,7 @@ import CredentialDTO from './dto/credential.dto';
 import { ValidationCodeDTO } from './dto/validation-code.dto';
 import { GetJwt } from 'src/jwt/get-jwt.decorator';
 import { EmailDTO } from './dto/email.dto';
+import { ChangeForgotPasswordDTO } from './dto/change-forgot-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -89,8 +91,18 @@ export class AuthController {
   @ApiForbiddenResponse()
   @ApiUnauthorizedResponse()
   @HttpCode(HttpStatus.OK)
-  @Post('Forget')
+  @Post('CodeForgotPassword')
   async sendEmailForgotPassword(@Body() email: EmailDTO): Promise<void> {
     await this.authService.sendEmailForgotPassword(email.email);
+  }
+
+  @ApiOkResponse()
+  @ApiForbiddenResponse()
+  @ApiUnauthorizedResponse()
+  @Put('ChangeForgotPassword')
+  async changeForgotPassword(
+    @Body() ChangePassword: ChangeForgotPasswordDTO,
+  ): Promise<void> {
+    await this.authService.changeForgotPassword(ChangePassword);
   }
 }

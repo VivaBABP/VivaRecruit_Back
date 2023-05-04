@@ -1,12 +1,14 @@
-import { IsEmail, IsNotEmpty, Max, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class ChangeForgotPasswordDTO {
+  @ApiProperty()
   @IsEmail()
   email: string;
+  @ApiProperty()
   @IsNotEmpty()
   password: string;
-  @Min(1)
-  @Max(4)
+  @ApiProperty()
   @IsNotEmpty()
   code: number;
 }

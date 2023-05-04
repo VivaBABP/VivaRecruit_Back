@@ -54,13 +54,14 @@ export class AuthService {
     return query;
   }
 
+  private async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, parseInt(process.env.SALT));
+  }
+
   async register(createUser: CreateUserDTO): Promise<void> {
     await this.verifyIfUserExist(createUser.email);
 
-    const hashedPassword = await bcrypt.hash(
-      createUser.password,
-      parseInt(process.env.SALT),
-    );
+    const hashedPassword = await this.hashPassword(createUser.password);
 
     const activationCode = Math.floor(Math.random() * 10000 + 1);
 
@@ -192,7 +193,7 @@ export class AuthService {
   }
 
   async login(credential: CredentialDTO): Promise<TokenDTO> {
-    const query = await this.verifyIfUserExist(credential.email);
+    const query = await this.verifyIfUserDontExist(credential.email);
 
     const verifyPwd = await bcrypt.compare(credential.password, query.password);
     if (!verifyPwd) {
@@ -225,6 +226,30 @@ export class AuthService {
     });
 
     await this.mailService.sendEmailForgotPassword(activationCode, email);
+  }
+
+  async changeForgotPassword(
+    ChangePassword: ChangeForgotPasswordDTO,
+  ): Promise<void> {
+    const query = await this.verifyIfUserDontExist(ChangePassword.email);
+
+    if (!query.activate) {
+      throw new UnauthorizedException();
+    } else if (query.codeActivate != ChangePassword.code) {
+      throw new ForbiddenException();
+    }
+
+    const hashedPassword = await this.hashPassword(ChangePassword.password);
+
+    await this.prisma.account.update({
+      data: {
+        password: hashedPassword,
+        codeActivate: null,
+      },
+      where: {
+        id: query.id,
+      },
+    });
   }
 
   @Cron(CronExpression.EVERY_12_HOURS)
