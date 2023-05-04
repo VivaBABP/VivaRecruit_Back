@@ -1,12 +1,9 @@
 name: Deploy_Dev
 
-# on:
-#   push:
-#     branches:
-#     - develop
-
 on:
-  workflow_dispatch
+  push:
+    branches:
+    - feature/deploiement
 
 jobs:        
 
