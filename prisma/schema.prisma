@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id               Int             @id @default(autoincrement())
+  email            String          @unique
+  password         String
+  refreshToken     String
+  activate         Boolean
+  codeActivate     Int?
+  name             String?
+  lastName         String?
+  phoneNumber      String?         @unique
+  lastDiploma      String?
+  hr               Boolean
+  cv               Bytes?          @db.Blob()
+  interests        Interests[]
+  profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
+  profileTypeId    Int?
+  jobDescription   JobDescription[]
+  createdAt        DateTime        @default(now())
+  
+}
+
+model ProfileType {
+  id          Int       @id @default(autoincrement())
+  label       String
+  description String
+  account     Account[]
+}
+
+model JobDescription {
+  id             Int       @id @default(autoincrement())
+  jobName        String
+  jobDescription String
+  skills         String?
+  account        Account? @relation(fields: [accountId], references: [id])
+  accountId      Int?
+}
+
+model Interests {
+  id            Int      @id @default(autoincrement())
+  labelInterest String
+  account       Account? @relation(fields: [accountId], references: [id])
+  accountId     Int?
+  Panel         Panel?   @relation(fields: [panelId], references: [id])
+  panelId       Int?
+}
+
+model Panel {
+  id        Int         @id @default(autoincrement())
+  namePanel String
+  interest  Interests[]
+}
