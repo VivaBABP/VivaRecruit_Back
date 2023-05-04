@@ -84,15 +84,9 @@ export class AuthService {
   }
 
   async emailValidation(validationCode: ValidationCodeDTO): Promise<TokenDTO> {
-    const user = await this.prisma.account.findFirst({
-      where: {
-        id: validationCode.idUser,
-      },
-    });
+    const user = await this.verifyIfUserDontExist(validationCode.email);
 
-    if (!user) {
-      throw new ForbiddenException("ce compte n'existe pas");
-    } else if (user.activate) {
+    if (user.activate) {
       throw new ForbiddenException('Compte déjà activé');
     } else if (user.codeActivate != validationCode.code) {
       throw new ForbiddenException('Code incorrect');
@@ -104,7 +98,7 @@ export class AuthService {
         activate: true,
       },
       where: {
-        id: validationCode.idUser,
+        email: validationCode.email,
       },
     });
 
@@ -194,6 +188,10 @@ export class AuthService {
 
   async login(credential: CredentialDTO): Promise<TokenDTO> {
     const query = await this.verifyIfUserDontExist(credential.email);
+
+    if (!query.activate) {
+      throw new ForbiddenException("Ce compte n'est pas activé");
+    }
 
     const verifyPwd = await bcrypt.compare(credential.password, query.password);
     if (!verifyPwd) {
