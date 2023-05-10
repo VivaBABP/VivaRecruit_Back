@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import CreateJobDTO from './dto/create-jobs.dto';
-import UpdateJobDTO from './dto/update-job.dto';
 
 @Injectable()
 export class JobsService {
