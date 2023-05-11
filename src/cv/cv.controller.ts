@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiForbiddenResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -27,6 +28,7 @@ export class CvController {
 
   @UseGuards(JwtGuard)
   @ApiForbiddenResponse()
+  @ApiOkResponse({ description: 'Fichier uploadé avec succès' })
   @Post()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -44,8 +46,8 @@ export class CvController {
   async uploadCv(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: { user: TokenPayload },
-  ) {
+  ): Promise<void> {
     console.log(req);
-    await this.cvService.uploadCv(file, req.user.sub); //Mise du cv dans un user spécifique car l'on ne récupère pas les données du token
+    await this.cvService.uploadCv(file, req.user.sub);
   }
 }

@@ -1,19 +1,10 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import UploadCvDTO from './dto/upload-cv.dto';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtService } from '@nestjs/jwt';
 import { Express } from 'express';
 
 @Injectable()
 export class CvService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async uploadCv(file: Express.Multer.File, id: number): Promise<void> {
     if (file.mimetype != 'application/pdf') {
