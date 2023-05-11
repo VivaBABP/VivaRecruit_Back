@@ -16,6 +16,7 @@ import { JwtGuard } from 'src/jwt/guards/jwt.guard';
 import { JwtRefreshGuard } from 'src/jwt/guards/jwt-refresh-guard';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
