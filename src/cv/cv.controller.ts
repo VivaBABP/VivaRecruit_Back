@@ -47,7 +47,6 @@ export class CvController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
-    console.log(req);
     await this.cvService.uploadCv(file, req.user.sub);
   }
 }
