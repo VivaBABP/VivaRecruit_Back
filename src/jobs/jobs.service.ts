@@ -6,13 +6,13 @@ import CreateJobDTO from './dto/create-jobs.dto';
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createJob(createJob: CreateJobDTO): Promise<void> {
+  async createJob(createJob: CreateJobDTO, id: number): Promise<void> {
     await this.prisma.jobDescription.create({
       data: {
         jobName: createJob.jobName,
         jobDescription: createJob.jobDescription,
         skills: createJob.skillsNeeded,
-        accountId: 1,
+        accountId: id,
       },
     });
   }
