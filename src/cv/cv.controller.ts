@@ -9,7 +9,9 @@ import { CvService } from './cv.service';
 import { Express } from 'express';
 import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('cv')
 export class CvController {
   constructor(private readonly cvService: CvService) {}

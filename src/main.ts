@@ -11,6 +11,7 @@ async function bootstrap() {
   // swagger
   const config = new DocumentBuilder()
     .setTitle('VivaRecruit Backend')
+    .addBearerAuth()
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
