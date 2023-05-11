@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
@@ -12,24 +12,23 @@ datasource db {
 }
 
 model Account {
-  id               Int             @id @default(autoincrement())
-  email            String          @unique
-  password         String
-  refreshToken     String
-  activate         Boolean
-  codeActivate     Int?
-  name             String?
-  lastName         String?
-  phoneNumber      String?         @unique
-  lastDiploma      String?
-  hr               Boolean
-  cv               Bytes?          @db.Blob()
-  interests        Interests[]
-  profileType      ProfileType?    @relation(fields: [profileTypeId], references: [id])
-  profileTypeId    Int?
-  jobDescription   JobDescription[]
-  createdAt        DateTime        @default(now())
-  
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  password       String
+  refreshToken   String
+  activate       Boolean
+  codeActivate   Int?
+  name           String?
+  lastName       String?
+  phoneNumber    String?          @unique
+  lastDiploma    String?
+  hr             Boolean
+  cv             Bytes?           @db.LongBlob()
+  interests      Interests[]
+  profileType    ProfileType?     @relation(fields: [profileTypeId], references: [id])
+  profileTypeId  Int?
+  jobDescription JobDescription[]
+  createdAt      DateTime         @default(now())
 }
 
 model ProfileType {
@@ -40,7 +39,7 @@ model ProfileType {
 }
 
 model JobDescription {
-  id             Int       @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   jobName        String
   jobDescription String
   skills         String?
