@@ -48,7 +48,7 @@ export class JobsController {
     await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
   }
 
-  @Get()
+  @Get('applied')
   async getAppliedJobs(
     @Req() req: { user: TokenPayload },
   ): Promise<CreateJobDTO[]> {

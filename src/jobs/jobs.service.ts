@@ -34,6 +34,15 @@ export class JobsService {
   // }
 
   async applyJob(idJob: number, idAccount: number) {
+    const jobExist = await this.prisma.jobDescription.findFirst({
+      where: {
+        id: idJob,
+      },
+    });
+    if (!jobExist)
+      throw new BadRequestException(
+        "Le job auquel vous voulez posté n'existe pas.",
+      );
     const jobApplied = await this.prisma.applyJob.findFirst({
       where: {
         idJob: { id: idJob },
