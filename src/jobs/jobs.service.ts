@@ -18,31 +18,70 @@ export class JobsService {
     });
   }
 
-  //A finir quand on pourra récupérer le Token
-  // async updateJob(updateJob: UpdateJobDTO): Promise<any> {
-  //   await this.prisma.jobDescription.update({
-  //     where: {
-  //       id: updateJob.jobId,
-  //     },
-  //     data: {
-  //       jobName: updateJob.jobName,
-  //       jobDescription: updateJob.jobDescription,
-  //       skills: updateJob.skillsNeeded,
-  //       accountId: 1,
-  //     },
-  //   });
-  // }
+  async updateJob(updateJob: UpdateJobDTO, idAccount: number): Promise<void> {
+    const jobExists = await this.prisma.jobDescription.findFirst({
+      where: {
+        id: updateJob.jobId,
+        accountId: idAccount,
+      },
+    });
+    if (!jobExists)
+      throw new BadRequestException(
+        "Ce job n'existe pas ou vous n'êtes pas autorisé à le modifier",
+      );
+    await this.prisma.jobDescription.update({
+      where: {
+        id: updateJob.jobId,
+      },
+      data: {
+        jobName: updateJob.jobName,
+        jobDescription: updateJob.jobDescription,
+        skills: updateJob.skillsNeeded,
+      },
+    });
+  }
 
-  async applyJob(idJob: number, idAccount: number) {
+  async getJob(idJob: number): Promise<UpdateJobDTO> {
+    const job = await this.prisma.jobDescription.findFirst({
+      where: {
+        id: idJob,
+      },
+    });
+    return {
+      jobId: job.id,
+      jobDescription: job.jobDescription,
+      jobName: job.jobName,
+      skillsNeeded: job.skills,
+    };
+  }
+
+  async getJobs(): Promise<UpdateJobDTO[]> {
+    const jobs = await this.prisma.jobDescription.findMany();
+    const listJobs: UpdateJobDTO[] = [];
+    jobs.forEach((e) => {
+      const job: UpdateJobDTO = {
+        jobId: e.id,
+        jobName: e.jobName,
+        jobDescription: e.jobDescription,
+        skillsNeeded: e.skills,
+      };
+      listJobs.push(job);
+    });
+    return listJobs;
+  }
+
+  async verifyIfJobExist(idJob: number) {
     const jobExist = await this.prisma.jobDescription.findFirst({
       where: {
         id: idJob,
       },
     });
     if (!jobExist)
-      throw new BadRequestException(
-        "Le job auquel vous voulez posté n'existe pas.",
-      );
+      throw new BadRequestException("Le job séléctionné n'existe pas.");
+  }
+
+  async applyJob(idJob: number, idAccount: number) {
+    await this.verifyIfJobExist(idJob);
     const jobApplied = await this.prisma.applyJob.findFirst({
       where: {
         idJob: { id: idJob },
@@ -87,5 +126,14 @@ export class JobsService {
       listeJobs.push(job);
     });
     return listeJobs;
+  }
+  async deleteAppliedJob(idAccount: number, idJob: number): Promise<void> {
+    await this.verifyIfJobExist(idJob);
+    await this.prisma.applyJob.deleteMany({
+      where: {
+        idAccount: { id: idAccount },
+        idJob: { id: idJob },
+      },
+    });
   }
 }

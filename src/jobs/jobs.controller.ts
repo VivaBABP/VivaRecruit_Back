@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import CreateJobDTO from './dto/create-jobs.dto';
 import {
@@ -11,6 +21,7 @@ import {
 import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { CreateApplyDto } from './dto/create-apply.dto';
 import { TokenPayload } from '../interfaces/token-payload.interface';
+import UpdateJobDTO from './dto/update-job.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -31,12 +42,25 @@ export class JobsController {
     return 'Job créé avec succès';
   }
 
-  //A finir quand on pourra récupérer le Token
-  // @Patch(':id')
-  // async updateJob(@Body() updateJob: UpdateJobDTO): Promise<string> {
-  //   // return await this.jobsService.createJob(createJob);
-  //   return 'Ok';
-  // }
+  @Patch()
+  @ApiOkResponse({ description: 'Le job à bien été modifié' })
+  @ApiBadRequestResponse()
+  async updateJob(
+    @Body() updateJob: UpdateJobDTO,
+    @Req() req: { user: TokenPayload },
+  ): Promise<void> {
+    await this.jobsService.updateJob(updateJob, req.user.sub);
+  }
+
+  @Get()
+  async getJobs(): Promise<UpdateJobDTO[]> {
+    return await this.jobsService.getJobs();
+  }
+
+  @Get(':id')
+  async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
+    return await this.jobsService.getJob(Number.parseInt(id));
+  }
 
   @ApiOkResponse({ description: 'Job postulé avec succès' })
   @ApiBadRequestResponse()
@@ -53,5 +77,16 @@ export class JobsController {
     @Req() req: { user: TokenPayload },
   ): Promise<CreateJobDTO[]> {
     return await this.jobsService.getAppliedJob(req.user.sub);
+  }
+
+  @Delete('applied/:idJob')
+  async deleteAppliedJob(
+    @Req() req: { user: TokenPayload },
+    @Param('idJob') idJob: string,
+  ): Promise<void> {
+    await this.jobsService.deleteAppliedJob(
+      req.user.sub,
+      Number.parseInt(idJob),
+    );
   }
 }
