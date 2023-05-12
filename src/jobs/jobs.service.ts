@@ -49,4 +49,31 @@ export class JobsService {
       },
     });
   }
+
+  async getAppliedJob(idAccount: number): Promise<CreateJobDTO[]> {
+    const query = await this.prisma.applyJob.findMany({
+      where: {
+        idAccount: { id: idAccount },
+      },
+      select: {
+        idJob: {
+          select: {
+            jobName: true,
+            jobDescription: true,
+            skills: true,
+          },
+        },
+      },
+    });
+    const listeJobs: CreateJobDTO[] = [];
+    query.forEach((e) => {
+      const job: CreateJobDTO = {
+        jobName: e.idJob.jobName,
+        jobDescription: e.idJob.jobDescription,
+        skillsNeeded: e.idJob.skills,
+      };
+      listeJobs.push(job);
+    });
+    return listeJobs;
+  }
 }
