@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import CreateJobDTO from './dto/create-jobs.dto';
 
@@ -31,4 +31,22 @@ export class JobsService {
   //     },
   //   });
   // }
+
+  async applyJob(idJob: number, idAccount: number) {
+    const jobApplied = await this.prisma.applyJob.findFirst({
+      where: {
+        idJob: { id: idJob },
+        idAccount: { id: idAccount },
+      },
+    });
+    if (jobApplied) {
+      throw new BadRequestException('Vous avez déjà postulé pour ce poste');
+    }
+    await this.prisma.applyJob.create({
+      data: {
+        idJob: { connect: { id: idJob } },
+        idAccount: { connect: { id: idAccount } },
+      },
+    });
+  }
 }

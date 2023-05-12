@@ -22,7 +22,7 @@ model Account {
   phoneNumber    String?          @unique
   lastDiploma    String?
   hr             Boolean
-  cv             Bytes?           @db.Blob()
+  cv             Bytes?           @db.LongBlob()
   interests      Interests[]
   profileType    ProfileType?     @relation(fields: [profileTypeId], references: [id])
   profileTypeId  Int?
@@ -39,11 +39,11 @@ model ProfileType {
 }
 
 model JobDescription {
-  id             Int       @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   jobName        String
   jobDescription String
   skills         String?
-  account        Account? @relation(fields: [accountId], references: [id])
+  account        Account?   @relation(fields: [accountId], references: [id])
   accountId      Int?
   ApplyJob       ApplyJob[]
 }

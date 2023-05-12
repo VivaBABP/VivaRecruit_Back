@@ -6,9 +6,6 @@ import { MailModule } from './mail/mail.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JobsModule } from './jobs/jobs.module';
 import { CvModule } from './cv/cv.module';
-import { ApplyJobsController } from './apply-jobs/apply-jobs.controller';
-import { ApplyJobsService } from './apply-jobs/apply-jobs.service';
-import { ApplyJobsModule } from './apply-jobs/apply-jobs.module';
 
 @Module({
   imports: [
@@ -19,9 +16,8 @@ import { ApplyJobsModule } from './apply-jobs/apply-jobs.module';
     ScheduleModule.forRoot(),
     JobsModule,
     CvModule,
-    ApplyJobsModule,
   ],
-  controllers: [ApplyJobsController],
-  providers: [ApplyJobsService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
