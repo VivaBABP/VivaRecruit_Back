@@ -1,9 +1,16 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import CreateJobDTO from './dto/create-jobs.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { TokenPayload } from 'src/interfaces/token-payload.interface';
-import { JwtGuard } from 'src/jwt/guards/jwt.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtGuard } from '../jwt/guards/jwt.guard';
+import { CreateApplyDto } from './dto/create-apply.dto';
+import { TokenPayload } from '../interfaces/token-payload.interface';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -30,4 +37,21 @@ export class JobsController {
   //   // return await this.jobsService.createJob(createJob);
   //   return 'Ok';
   // }
+
+  @ApiOkResponse({ description: 'Job postulé avec succès' })
+  @ApiBadRequestResponse()
+  @Post('apply')
+  async applyJob(
+    @Body() applyJobDto: CreateApplyDto,
+    @Req() req: { user: TokenPayload },
+  ): Promise<void> {
+    await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
+  }
+
+  @Get('applied')
+  async getAppliedJobs(
+    @Req() req: { user: TokenPayload },
+  ): Promise<CreateJobDTO[]> {
+    return await this.jobsService.getAppliedJob(req.user.sub);
+  }
 }

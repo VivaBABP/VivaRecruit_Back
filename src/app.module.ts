@@ -17,5 +17,7 @@ import { CvModule } from './cv/cv.module';
     JobsModule,
     CvModule,
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

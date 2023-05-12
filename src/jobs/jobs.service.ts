@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import UpdateJobDTO from './dto/update-job.dto';
 import CreateJobDTO from './dto/create-jobs.dto';
 
 @Injectable()
@@ -31,4 +32,60 @@ export class JobsService {
   //     },
   //   });
   // }
+
+  async applyJob(idJob: number, idAccount: number) {
+    const jobExist = await this.prisma.jobDescription.findFirst({
+      where: {
+        id: idJob,
+      },
+    });
+    if (!jobExist)
+      throw new BadRequestException(
+        "Le job auquel vous voulez posté n'existe pas.",
+      );
+    const jobApplied = await this.prisma.applyJob.findFirst({
+      where: {
+        idJob: { id: idJob },
+        idAccount: { id: idAccount },
+      },
+    });
+    if (jobApplied) {
+      throw new BadRequestException('Vous avez déjà postulé pour ce poste');
+    }
+    await this.prisma.applyJob.create({
+      data: {
+        idJob: { connect: { id: idJob } },
+        idAccount: { connect: { id: idAccount } },
+      },
+    });
+  }
+
+  async getAppliedJob(idAccount: number): Promise<CreateJobDTO[]> {
+    const query = await this.prisma.applyJob.findMany({
+      where: {
+        idAccount: { id: idAccount },
+      },
+      select: {
+        idJob: {
+          select: {
+            jobName: true,
+            jobDescription: true,
+            skills: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const listeJobs: UpdateJobDTO[] = [];
+    query.forEach((e) => {
+      const job: UpdateJobDTO = {
+        jobId: e.idJob.id,
+        jobName: e.idJob.jobName,
+        jobDescription: e.idJob.jobDescription,
+        skillsNeeded: e.idJob.skills,
+      };
+      listeJobs.push(job);
+    });
+    return listeJobs;
+  }
 }
