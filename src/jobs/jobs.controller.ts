@@ -4,6 +4,7 @@ import CreateJobDTO from './dto/create-jobs.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';

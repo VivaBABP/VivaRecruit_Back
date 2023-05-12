@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import UpdateJobDTO from './dto/update-job.dto';
 import CreateJobDTO from './dto/create-jobs.dto';
 
 @Injectable()
@@ -61,13 +62,15 @@ export class JobsService {
             jobName: true,
             jobDescription: true,
             skills: true,
+            id: true,
           },
         },
       },
     });
-    const listeJobs: CreateJobDTO[] = [];
+    const listeJobs: UpdateJobDTO[] = [];
     query.forEach((e) => {
-      const job: CreateJobDTO = {
+      const job: UpdateJobDTO = {
+        jobId: e.idJob.id,
         jobName: e.idJob.jobName,
         jobDescription: e.idJob.jobDescription,
         skillsNeeded: e.idJob.skills,
