@@ -11,16 +11,23 @@ import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { CreateApplyDto } from './dto/create-apply.dto';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 
-@ApiBearerAuth()
 @UseGuards(JwtGuard)
+@ApiBearerAuth()
 @ApiTags('Jobs')
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Post()
-  async createJob(@Body() createJob: CreateJobDTO): Promise<void> {
-    return await this.jobsService.createJob(createJob);
+  @ApiCreatedResponse({
+    type: String,
+  })
+  async createJob(
+    @Req() req: { user: TokenPayload },
+    @Body() createJob: CreateJobDTO,
+  ): Promise<string> {
+    await this.jobsService.createJob(createJob, req.user.sub);
+    return 'Job créé avec succès';
   }
 
   //A finir quand on pourra récupérer le Token

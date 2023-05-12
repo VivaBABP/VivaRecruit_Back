@@ -20,13 +20,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-@ApiTags('Cv')
+@UseGuards(JwtGuard)
 @ApiBearerAuth()
+@ApiTags('Cv')
 @Controller('cv')
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
-  @UseGuards(JwtGuard)
   @ApiForbiddenResponse()
   @ApiOkResponse({ description: 'Fichier uploadé avec succès' })
   @Post()
