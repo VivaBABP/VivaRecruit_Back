@@ -99,7 +99,7 @@ export class JobsService {
     });
   }
 
-  async getAppliedJob(idAccount: number): Promise<CreateJobDTO[]> {
+  async getAppliedJob(idAccount: number): Promise<UpdateJobDTO[]> {
     const query = await this.prisma.applyJob.findMany({
       where: {
         idAccount: { id: idAccount },

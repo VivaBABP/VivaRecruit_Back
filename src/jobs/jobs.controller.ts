@@ -80,7 +80,8 @@ export class JobsController {
   }
 
   @ApiOkResponse({
-    type: CreateJobDTO,
+    type: UpdateJobDTO,
+    isArray: true,
   })
   @Get('applied')
   async getAppliedJobs(
