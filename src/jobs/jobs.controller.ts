@@ -55,6 +55,7 @@ export class JobsController {
   @Get()
   @ApiOkResponse({
     type: UpdateJobDTO,
+    isArray: true,
   })
   async getJobs(): Promise<UpdateJobDTO[]> {
     return await this.jobsService.getJobs();
