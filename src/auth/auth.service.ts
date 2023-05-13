@@ -63,7 +63,7 @@ export class AuthService {
 
     const hashedPassword = await this.hashPassword(createUser.password);
 
-    const activationCode = Math.floor(Math.random() * 10000 + 1);
+    const activationCode = Math.floor(Math.random() * (10000 - 1000) + 1000);
 
     const user = await this.prisma.account.create({
       data: {
@@ -212,7 +212,7 @@ export class AuthService {
       throw new ForbiddenException('Compte non activé');
     }
 
-    const activationCode = Math.floor(Math.random() * 10000 + 1);
+    const activationCode = Math.floor(Math.random() * (10000 - 1000) + 1000);
 
     await this.prisma.account.update({
       data: {
