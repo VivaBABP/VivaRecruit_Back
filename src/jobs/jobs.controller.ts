@@ -53,16 +53,22 @@ export class JobsController {
   }
 
   @Get()
+  @ApiOkResponse({
+    type: UpdateJobDTO,
+  })
   async getJobs(): Promise<UpdateJobDTO[]> {
     return await this.jobsService.getJobs();
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    type: UpdateJobDTO,
+  })
   async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
     return await this.jobsService.getJob(Number.parseInt(id));
   }
 
-  @ApiOkResponse({ description: 'Job postulé avec succès' })
+  @ApiOkResponse()
   @ApiBadRequestResponse()
   @Post('apply')
   async applyJob(
@@ -72,6 +78,9 @@ export class JobsController {
     await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
   }
 
+  @ApiOkResponse({
+    type: CreateJobDTO,
+  })
   @Get('applied')
   async getAppliedJobs(
     @Req() req: { user: TokenPayload },
@@ -80,6 +89,7 @@ export class JobsController {
   }
 
   @Delete('applied/:idJob')
+  @ApiOkResponse()
   async deleteAppliedJob(
     @Req() req: { user: TokenPayload },
     @Param('idJob') idJob: string,

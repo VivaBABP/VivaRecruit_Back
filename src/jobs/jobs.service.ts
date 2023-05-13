@@ -70,7 +70,7 @@ export class JobsService {
     return listJobs;
   }
 
-  async verifyIfJobExist(idJob: number) {
+  private async verifyIfJobExist(idJob: number) {
     const jobExist = await this.prisma.jobDescription.findFirst({
       where: {
         id: idJob,
