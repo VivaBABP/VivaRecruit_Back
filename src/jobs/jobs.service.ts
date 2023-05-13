@@ -70,7 +70,7 @@ export class JobsService {
     return listJobs;
   }
 
-  async verifyIfJobExist(idJob: number) {
+  private async verifyIfJobExist(idJob: number) {
     const jobExist = await this.prisma.jobDescription.findFirst({
       where: {
         id: idJob,
@@ -99,7 +99,7 @@ export class JobsService {
     });
   }
 
-  async getAppliedJob(idAccount: number): Promise<CreateJobDTO[]> {
+  async getAppliedJob(idAccount: number): Promise<UpdateJobDTO[]> {
     const query = await this.prisma.applyJob.findMany({
       where: {
         idAccount: { id: idAccount },
