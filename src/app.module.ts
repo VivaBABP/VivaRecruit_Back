@@ -6,6 +6,7 @@ import { MailModule } from './mail/mail.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JobsModule } from './jobs/jobs.module';
 import { CvModule } from './cv/cv.module';
+import { InterestModule } from './interest/interest.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CvModule } from './cv/cv.module';
     ScheduleModule.forRoot(),
     JobsModule,
     CvModule,
+    InterestModule,
   ],
   controllers: [],
   providers: [],
