@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
@@ -24,12 +24,14 @@ model Account {
   lastDiploma    String?
   hr             Boolean
   cv             Bytes?           @db.LongBlob()
-  interests      Interests[]
+  interests      HasInterest[]
   profileType    ProfileType?     @relation(fields: [profileTypeId], references: [id])
   profileTypeId  Int?
   jobDescription JobDescription[]
   createdAt      DateTime         @default(now())
   ApplyJob       ApplyJob[]
+  panel          Panel?           @relation(fields: [panelId], references: [id])
+  panelId        Int?
 }
 
 model ProfileType {
@@ -58,16 +60,43 @@ model ApplyJob {
 }
 
 model Interests {
-  id            Int      @id @default(autoincrement())
-  labelInterest String
-  account       Account? @relation(fields: [accountId], references: [id])
-  accountId     Int?
-  Panel         Panel?   @relation(fields: [panelId], references: [id])
-  panelId       Int?
+  id            Int           @id @default(autoincrement())
+  labelInterest String        @unique
+  HasInterest   HasInterest[]
+  Panel         Panel[]
+}
+
+model HasInterest {
+  id          Int       @id @default(autoincrement())
+  account     Account   @relation(fields: [accountId], references: [id])
+  idInterest  Interests @relation(fields: [interestsId], references: [id])
+  interestsId Int
+  accountId   Int
 }
 
 model Panel {
-  id        Int         @id @default(autoincrement())
-  namePanel String
-  interest  Interests[]
+  id          Int       @id @default(autoincrement())
+  namePanel   String
+  idInterest  Interests @relation(fields: [interestsId], references: [id])
+  interestsId Int
+  company     Company   @relation(fields: [companyId], references: [id])
+  companyId   Int
+  Account     Account[]
+}
+
+model Company {
+  id             Int         @id @default(autoincrement())
+  companyName    String
+  description    String
+  websiteLink    String
+  lineOfBusiness String
+  companyType    CompanyType @relation(fields: [companyTypeId], references: [id])
+  companyTypeId  Int
+  Panel          Panel[]
+}
+
+model CompanyType {
+  id               Int       @id @default(autoincrement())
+  labelCompanyType String
+  Company          Company[]
 }
