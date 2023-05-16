@@ -17,6 +17,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import dayjs from 'dayjs';
 import { Account } from '@prisma/client';
 import { ChangeForgotPasswordDTO } from './dto/change-forgot-password.dto';
+import InformationUserDTO from '../accounts/dto/information-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -249,6 +250,8 @@ export class AuthService {
       },
     });
   }
+
+  
 
   @Cron(CronExpression.EVERY_12_HOURS)
   async deleteDesactivateAccount(): Promise<void> {
