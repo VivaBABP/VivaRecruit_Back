@@ -4,5 +4,5 @@ import { IsNotEmpty } from 'class-validator';
 export class GetPanelSuggestionDto {
   @ApiProperty()
   @IsNotEmpty()
-  idInterests: number[];
+  idInterests: string[];
 }

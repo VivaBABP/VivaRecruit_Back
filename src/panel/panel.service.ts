@@ -21,7 +21,7 @@ export class PanelService {
         companyId: createPanelDto.companyId,
       },
     });
-    if (!panel) throw new BadRequestException('Stand déjà existant');
+    if (panel) throw new BadRequestException('Stand déjà existant');
   }
 
   private async verifyIfPanelExist(idPanel: number): Promise<void> {
@@ -68,11 +68,11 @@ export class PanelService {
       },
     });
     const panelDto: GetPanelDto[] = [];
-    panelDto.forEach((e) => {
+    panels.forEach((e) => {
       panelDto.push({
-        companyName: e.companyName,
-        interestLabel: e.interestLabel,
-        panelName: e.panelName,
+        companyName: e.company.companyName,
+        interestLabel: e.idInterest.labelInterest,
+        panelName: e.namePanel,
       });
     });
     return panelDto;
@@ -139,7 +139,7 @@ export class PanelService {
         namePanel: updatePanelDto.namePanel,
       },
     });
-    if (!panel) throw new BadRequestException('Ce nom de panel est déjà pris');
+    if (panel) throw new BadRequestException('Ce nom de panel est déjà pris');
 
     await this.prisma.panel.update({
       where: { id: id },
@@ -164,10 +164,14 @@ export class PanelService {
     });
   }
 
-  async getPanelSuggestion(intestsId: number[]): Promise<GetPanelDto[]> {
+  async getPanelSuggestion(intestsId: string[]): Promise<GetPanelDto[]> {
+    const interests: number[] = [];
+    intestsId.forEach((e) => {
+      interests.push(+e);
+    });
     const panels = await this.prisma.panel.findMany({
       where: {
-        idInterest: { id: { in: intestsId } },
+        interestsId: { in: interests },
       },
       select: {
         namePanel: true,
@@ -178,6 +182,7 @@ export class PanelService {
         },
         idInterest: {
           select: {
+            id: true,
             labelInterest: true,
           },
         },
