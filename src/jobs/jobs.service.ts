@@ -42,6 +42,7 @@ export class JobsService {
   }
 
   async getJob(idJob: number): Promise<UpdateJobDTO> {
+    await this.verifyIfJobExist(idJob);
     const job = await this.prisma.jobDescription.findFirst({
       where: {
         id: idJob,

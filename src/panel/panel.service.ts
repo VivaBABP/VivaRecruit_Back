@@ -79,6 +79,7 @@ export class PanelService {
   }
 
   async findOne(id: number): Promise<GetPanelDto> {
+    await this.verifyIfPanelExist(id);
     const panel = await this.prisma.panel.findFirst({
       select: {
         namePanel: true,
