@@ -29,7 +29,7 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
     @Patch()
-    @ApiOkResponse({ description: 'Le job à bien été modifié' })
+    @ApiOkResponse({ description: 'Vos informations de compte sont enregistées' })
     @ApiBadRequestResponse()
     async addUserInformation(
       @Body() updateAccounts: InformationUserDTO ,
