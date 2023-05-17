@@ -28,6 +28,7 @@ export class InterestService {
   }
 
   async findOne(id: number): Promise<GetInterestDto> {
+    await this.verifyIfInterestExists(id);
     const interest = await this.prisma.interests.findFirst({
       where: {
         id: id,

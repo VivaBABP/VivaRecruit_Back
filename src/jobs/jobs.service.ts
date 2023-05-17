@@ -42,6 +42,7 @@ export class JobsService {
   }
 
   async getJob(idJob: number): Promise<UpdateJobDTO> {
+    await this.verifyIfJobExist(idJob);
     const job = await this.prisma.jobDescription.findFirst({
       where: {
         id: idJob,
@@ -59,13 +60,12 @@ export class JobsService {
     const jobs = await this.prisma.jobDescription.findMany();
     const listJobs: UpdateJobDTO[] = [];
     jobs.forEach((e) => {
-      const job: UpdateJobDTO = {
+      listJobs.push({
         jobId: e.id,
         jobName: e.jobName,
         jobDescription: e.jobDescription,
         skillsNeeded: e.skills,
-      };
-      listJobs.push(job);
+      });
     });
     return listJobs;
   }

@@ -7,6 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { JobsModule } from './jobs/jobs.module';
 import { CvModule } from './cv/cv.module';
 import { InterestModule } from './interest/interest.module';
+import { PanelModule } from './panel/panel.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { InterestModule } from './interest/interest.module';
     JobsModule,
     CvModule,
     InterestModule,
+    PanelModule,
   ],
   controllers: [],
   providers: [],
