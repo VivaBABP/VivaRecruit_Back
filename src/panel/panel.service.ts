@@ -165,14 +165,22 @@ export class PanelService {
     });
   }
 
-  async getPanelSuggestion(intestsId: string[]): Promise<GetPanelDto[]> {
-    const interests: number[] = [];
-    intestsId.forEach((e) => {
-      interests.push(+e);
+  async getPanelSuggestion(id: number): Promise<GetPanelDto[]> {
+    const interests = await this.prisma.interests.findMany({
+      where: {
+        HasInterest: { some: { accountId: id } },
+      },
+      select: {
+        id: true,
+      },
+    });
+    const listeI: number[] = [];
+    interests.forEach((e) => {
+      listeI.push(e.id);
     });
     const panels = await this.prisma.panel.findMany({
       where: {
-        interestsId: { in: interests },
+        interestsId: { in: listeI },
       },
       select: {
         namePanel: true,
