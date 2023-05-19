@@ -18,6 +18,11 @@ export class AccountsService {
         if (!accountActive.activate) {
           throw new ForbiddenException('Compte non activé');
         } 
+        if (!accountActive)
+        throw new BadRequestException(
+          "Le compte n'existe pas",
+        );
+  
     
         await this.prisma.account.update({
           where: {
