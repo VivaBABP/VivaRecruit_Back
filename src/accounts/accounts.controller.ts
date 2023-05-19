@@ -13,6 +13,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiTags,
   } from '@nestjs/swagger';
@@ -24,6 +25,9 @@ import { JwtGuard } from 'src/jwt/guards/jwt.guard';
 @ApiBearerAuth()
 @ApiTags('Accounts')
 @ApiCreatedResponse()
+@ApiForbiddenResponse({
+  description: 'Mauvais utilisateur',
+})
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
