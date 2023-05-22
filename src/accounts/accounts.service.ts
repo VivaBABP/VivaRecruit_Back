@@ -9,7 +9,7 @@ export class AccountsService {
       ) {}
 
 
-    async addUserInformation(addUserInformation: InformationUserDTO, id:number ): Promise<void> {
+    async addUserInformation(addUserInformation: InformationUserDTO, id: number ): Promise<void> {
       const accountActive = await this.prisma.account.findFirst({
         where: {
           id: id ,

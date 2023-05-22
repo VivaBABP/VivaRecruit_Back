@@ -25,7 +25,6 @@ import { JwtGuard } from 'src/jwt/guards/jwt.guard';
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
 @ApiTags('Accounts')
-
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) { }
