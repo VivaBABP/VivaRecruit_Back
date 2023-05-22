@@ -22,8 +22,6 @@ import {
 import { GetPanelDto } from './dto/get-panel.dto';
 import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { TokenPayload } from '../interfaces/token-payload.interface';
-import * as readline from 'readline';
-import { GetPanelSuggestionDto } from './dto/get-panel-suggestion.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -94,10 +92,8 @@ export class PanelController {
   })
   @ApiBadRequestResponse()
   async getSuggestionParcours(
-    @Body() panelSuggestionDto: GetPanelSuggestionDto,
+    @Req() req: { user: TokenPayload },
   ): Promise<GetPanelDto[]> {
-    return await this.panelService.getPanelSuggestion(
-      panelSuggestionDto.idInterests,
-    );
+    return await this.panelService.getPanelSuggestion(req.user.sub);
   }
 }
