@@ -33,11 +33,6 @@ import { ChangeForgotPasswordDTO } from './dto/change-forgot-password.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('test')
-  async test2(): Promise<any> {
-    return 'test';
-  }
-
   @ApiCreatedResponse()
   @ApiForbiddenResponse({
     description: 'compte déjà existant',
