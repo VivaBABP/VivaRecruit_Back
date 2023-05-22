@@ -8,6 +8,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { CvModule } from './cv/cv.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { InterestModule } from './interest/interest.module';
+import { PanelModule } from './panel/panel.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { InterestModule } from './interest/interest.module';
     CvModule,
     AccountsModule,
     InterestModule,
+    PanelModule,
   ],
   controllers: [],
   providers: [],
