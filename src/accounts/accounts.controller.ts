@@ -38,7 +38,8 @@ export class AccountsController {
   @ApiBadRequestResponse()
   async addUserInformation(
     @Body() updateAccounts: InformationUserDTO,
+    @Req() req: {user: TokenPayload },
   ): Promise<void> {
-    await this.accountsService.addUserInformation(updateAccounts);
+    await this.accountsService.addUserInformation(updateAccounts, req.user.sub);
   }
 }

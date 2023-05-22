@@ -9,10 +9,10 @@ export class AccountsService {
       ) {}
 
 
-    async addUserInformation(addUserInformation: InformationUserDTO): Promise<void> {
+    async addUserInformation(addUserInformation: InformationUserDTO, id:number ): Promise<void> {
       const accountActive = await this.prisma.account.findFirst({
         where: {
-          id: addUserInformation.accountId,
+          id: id ,
         }
       });
         if (!accountActive.activate) {
@@ -26,7 +26,7 @@ export class AccountsService {
     
         await this.prisma.account.update({
           where: {
-            id: addUserInformation.accountId,
+           id : id,
           },
           data: {
             name: addUserInformation.name,
