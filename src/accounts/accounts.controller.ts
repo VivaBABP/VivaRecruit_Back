@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Patch,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
 import InformationUserDTO from '../accounts/dto/information-user.dto';
 import {
   ApiBadRequestResponse,
@@ -27,7 +17,7 @@ import { JwtGuard } from 'src/jwt/guards/jwt.guard';
 @ApiTags('Accounts')
 @Controller('accounts')
 export class AccountsController {
-  constructor(private readonly accountsService: AccountsService) { }
+  constructor(private readonly accountsService: AccountsService) {}
   @ApiCreatedResponse()
   @ApiForbiddenResponse({
     description: 'Mauvais utilisateur',
@@ -37,7 +27,7 @@ export class AccountsController {
   @ApiBadRequestResponse()
   async addUserInformation(
     @Body() updateAccounts: InformationUserDTO,
-    @Req() req: {user: TokenPayload },
+    @Req() req: { user: TokenPayload },
   ): Promise<void> {
     await this.accountsService.addUserInformation(updateAccounts, req.user.sub);
   }

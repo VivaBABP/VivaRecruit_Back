@@ -251,8 +251,6 @@ export class AuthService {
     });
   }
 
-  
-
   @Cron(CronExpression.EVERY_12_HOURS)
   async deleteDesactivateAccount(): Promise<void> {
     const users = await this.prisma.account.findMany();

@@ -76,5 +76,4 @@ jobs:
           cd node_modules/.prisma/client/
           rm libquery_engine-debian-openssl-1.0.x.so.node
           mv libquery_engine-rhel-openssl-1.0.x.so.node libquery_engine-debian-openssl-1.1.x.so.node
-          npx prisma db seed
           /usr/sbin/cloudlinux-selector start --json --interpreter=nodejs --app-root=/home/pari0012/vivarecruitdev/
