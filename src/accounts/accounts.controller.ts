@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Patch,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
 import InformationUserDTO from '../accounts/dto/information-user.dto';
 import {
   ApiBadRequestResponse,
