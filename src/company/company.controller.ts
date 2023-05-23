@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -20,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/jwt/guards/jwt.guard';
 import { GetCompanyDto } from './dto/get-company.dto';
+import { TokenPayload } from 'src/interfaces/token-payload.interface';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -43,7 +45,7 @@ export class CompanyController {
   })
   @ApiForbiddenResponse()
   @ApiBadRequestResponse()
-  async findAll() {
+  async findAll(): Promise<GetCompanyDto[]> {
     return await this.companyService.findAll();
   }
 
@@ -61,15 +63,22 @@ export class CompanyController {
   @ApiOkResponse()
   @ApiBadRequestResponse()
   @ApiForbiddenResponse()
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @Req() req: { user: TokenPayload },
+  ) {
+    return this.companyService.update(+id, updateCompanyDto, req.user.role);
   }
 
   @Delete(':id')
   @ApiOkResponse()
   @ApiBadRequestResponse()
   @ApiForbiddenResponse()
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @Req() req: { user: TokenPayload },
+  ): Promise<void> {
+    return this.companyService.remove(+id, req.user.role);
   }
 }

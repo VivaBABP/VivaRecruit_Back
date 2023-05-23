@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -86,8 +90,23 @@ export class CompanyService {
     return companyDto;
   }
 
-  async update(id: number, updateCompanyDto: UpdateCompanyDto) {
+  async update(
+    id: number,
+    updateCompanyDto: UpdateCompanyDto,
+    recruit: boolean,
+  ) {
+    if (!recruit)
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à executer cette action",
+      );
     await this.verifyCompanyExists(id);
+    const companyType = await this.prisma.companyType.findFirst({
+      where: {
+        id: updateCompanyDto.companyTypeId,
+      },
+    });
+    if (!companyType)
+      throw new BadRequestException("Ce type d'entreprise n'existe pas");
     await this.prisma.company.update({
       where: { id: id },
       data: {
@@ -100,7 +119,11 @@ export class CompanyService {
     });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number, recruit: boolean): Promise<void> {
+    if (!recruit)
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à executer cette action",
+      );
     await this.verifyCompanyExists(id);
     await this.prisma.company.delete({
       where: {
