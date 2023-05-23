@@ -15,6 +15,7 @@ import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
@@ -53,6 +54,8 @@ export class CvController {
     await this.cvService.uploadCv(file, req.user.sub);
   }
 
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
   @Get(':idStudent')
   async DownloadCv(
     @Param('idStudent') idStudent: string,
