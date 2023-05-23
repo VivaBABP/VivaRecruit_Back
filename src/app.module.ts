@@ -6,6 +6,7 @@ import { MailModule } from './mail/mail.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JobsModule } from './jobs/jobs.module';
 import { CvModule } from './cv/cv.module';
+import { AccountsModule } from './accounts/accounts.module';
 import { InterestModule } from './interest/interest.module';
 import { PanelModule } from './panel/panel.module';
 import { CompanyModule } from './company/company.module';
@@ -19,6 +20,7 @@ import { CompanyModule } from './company/company.module';
     ScheduleModule.forRoot(),
     JobsModule,
     CvModule,
+    AccountsModule,
     InterestModule,
     PanelModule,
     CompanyModule,
