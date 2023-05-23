@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import InformationUserDTO from './dto/information-user.dto';
 import { Account } from '@prisma/client';
+import InformationStudentDTO from './dto/information-students.dto';
 
 @Injectable()
 export class AccountsService {
@@ -38,12 +39,22 @@ export class AccountsService {
     });
   }
 
-  async getStudents(): Promise<Account[]> {
-    return await this.prisma.account.findMany({
+  async getStudents(): Promise<InformationStudentDTO[]> {
+    const result = await this.prisma.account.findMany({
+      select: {
+        id: true,
+        name: true,
+        lastName: true,
+        email: true,
+      },
       where: {
-        hr: false,
+        hr: true,
         activate: true,
+        cv: {
+          not: null,
+        },
       },
     });
+    return result as InformationStudentDTO[];
   }
 }

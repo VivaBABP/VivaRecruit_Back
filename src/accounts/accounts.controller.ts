@@ -11,6 +11,7 @@ import {
 import { AccountsService } from './accounts.service';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { JwtGuard } from 'src/jwt/guards/jwt.guard';
+import InformationStudentDTO from './dto/information-students.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -33,8 +34,10 @@ export class AccountsController {
   }
 
   @Get()
-  @ApiOkResponse()
-  async getStudents() {
+  @ApiOkResponse({
+    type: InformationUserDTO,
+  })
+  async getStudents(): Promise<InformationStudentDTO[]> {
     return await this.accountsService.getStudents();
   }
 }
