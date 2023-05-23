@@ -1,10 +1,13 @@
 import {
   Controller,
   Post,
+  Get,
   Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  StreamableFile,
+  Param,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { Express } from 'express';
@@ -12,6 +15,7 @@ import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
@@ -48,5 +52,15 @@ export class CvController {
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
     await this.cvService.uploadCv(file, req.user.sub);
+  }
+
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
+  @Get(':idStudent')
+  async DownloadCv(
+    @Param('idStudent') idStudent: string,
+  ): Promise<StreamableFile> {
+    const pdf = await this.cvService.downloadCv(+idStudent);
+    return new StreamableFile(pdf);
   }
 }
