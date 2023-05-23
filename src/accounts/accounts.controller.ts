@@ -35,7 +35,8 @@ export class AccountsController {
 
   @Get()
   @ApiOkResponse({
-    type: InformationUserDTO,
+    type: InformationStudentDTO,
+    isArray: true,
   })
   async getStudents(): Promise<InformationStudentDTO[]> {
     return await this.accountsService.getStudents();
