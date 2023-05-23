@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import InformationUserDTO from './dto/information-user.dto';
+import { Account } from '@prisma/client';
 
 @Injectable()
 export class AccountsService {
@@ -33,6 +34,15 @@ export class AccountsService {
         lastName: addUserInformation.lastName,
         phoneNumber: addUserInformation.phoneNumber,
         lastDiploma: addUserInformation.lastDiploma,
+      },
+    });
+  }
+
+  async getStudents(): Promise<Account[]> {
+    return await this.prisma.account.findMany({
+      where: {
+        hr: false,
+        activate: true,
       },
     });
   }

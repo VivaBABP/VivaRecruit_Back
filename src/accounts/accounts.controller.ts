@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import InformationUserDTO from '../accounts/dto/information-user.dto';
 import {
   ApiBadRequestResponse,
@@ -30,5 +30,11 @@ export class AccountsController {
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
     await this.accountsService.addUserInformation(updateAccounts, req.user.sub);
+  }
+
+  @Get()
+  @ApiOkResponse()
+  async getStudents() {
+    return await this.accountsService.getStudents();
   }
 }
