@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateCompanyDto {
+export class GetCompanyDto {
   @ApiProperty()
   @IsNotEmpty()
   companyName: string;
@@ -16,5 +16,5 @@ export class CreateCompanyDto {
   lineOfBusiness: string;
 
   @ApiProperty()
-  companyTypeId: number;
+  companyTypeLabel: string;
 }
