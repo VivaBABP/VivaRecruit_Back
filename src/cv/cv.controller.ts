@@ -1,10 +1,12 @@
 import {
   Controller,
   Post,
+  Get,
   Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  StreamableFile,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { Express } from 'express';
@@ -48,5 +50,13 @@ export class CvController {
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
     await this.cvService.uploadCv(file, req.user.sub);
+  }
+
+  @Get()
+  async DownloadCv(
+    @Req() req: { user: TokenPayload },
+  ): Promise<StreamableFile> {
+    const pdf = await this.cvService.downloadCv(req.user.sub);
+    return new StreamableFile(pdf);
   }
 }

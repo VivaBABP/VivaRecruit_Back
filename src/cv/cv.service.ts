@@ -22,4 +22,16 @@ export class CvService {
       },
     });
   }
+
+  async downloadCv(id: number): Promise<Buffer> {
+    const result = await this.prisma.account.findFirst({
+      select: {
+        cv: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+    return result.cv;
+  }
 }
