@@ -38,7 +38,9 @@ export class AccountsController {
     type: InformationStudentDTO,
     isArray: true,
   })
-  async getStudents(): Promise<InformationStudentDTO[]> {
-    return await this.accountsService.getStudents();
+  async getStudents(
+    @Req() req: { user: TokenPayload },
+  ): Promise<InformationStudentDTO[]> {
+    return await this.accountsService.getStudents(req.user.role);
   }
 }

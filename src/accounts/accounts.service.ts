@@ -39,7 +39,11 @@ export class AccountsService {
     });
   }
 
-  async getStudents(): Promise<InformationStudentDTO[]> {
+  async getStudents(role: boolean): Promise<InformationStudentDTO[]> {
+    if (!role)
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à executer cette action",
+      );
     const result = await this.prisma.account.findMany({
       select: {
         id: true,
@@ -48,7 +52,7 @@ export class AccountsService {
         email: true,
       },
       where: {
-        hr: true,
+        hr: false,
         activate: true,
         cv: {
           not: null,
