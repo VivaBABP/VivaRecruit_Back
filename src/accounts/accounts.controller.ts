@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import InformationUserDTO from '../accounts/dto/information-user.dto';
 import {
   ApiBadRequestResponse,
@@ -11,6 +11,7 @@ import {
 import { AccountsService } from './accounts.service';
 import { TokenPayload } from 'src/interfaces/token-payload.interface';
 import { JwtGuard } from 'src/jwt/guards/jwt.guard';
+import InformationStudentDTO from './dto/information-students.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -30,5 +31,16 @@ export class AccountsController {
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
     await this.accountsService.addUserInformation(updateAccounts, req.user.sub);
+  }
+
+  @Get()
+  @ApiOkResponse({
+    type: InformationStudentDTO,
+    isArray: true,
+  })
+  async getStudents(
+    @Req() req: { user: TokenPayload },
+  ): Promise<InformationStudentDTO[]> {
+    return await this.accountsService.getStudents(req.user.role);
   }
 }

@@ -54,7 +54,9 @@ export class CvController {
     await this.cvService.uploadCv(file, req.user.sub);
   }
 
-  @ApiOkResponse()
+  @ApiOkResponse({
+    type: StreamableFile,
+  })
   @ApiBadRequestResponse()
   @Get(':idStudent')
   async DownloadCv(
