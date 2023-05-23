@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Express } from 'express';
 
@@ -32,6 +36,10 @@ export class CvService {
         id: id,
       },
     });
+
+    if (!result) throw new BadRequestException("L'etudiant n'existe pas");
+    if (!result.cv) throw new BadRequestException('Aucun CV trouvé');
+
     return result.cv;
   }
 }
