@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import InformationUserDTO from './dto/information-user.dto';
-import { Account } from '@prisma/client';
 import InformationStudentDTO from './dto/information-students.dto';
 
 @Injectable()
