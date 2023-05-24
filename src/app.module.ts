@@ -11,6 +11,7 @@ import { InterestModule } from './interest/interest.module';
 import { PanelModule } from './panel/panel.module';
 import { CompanyModule } from './company/company.module';
 import { CompanyTypeModule } from './company-type/company-type.module';
+import { ApplyModule } from './apply/apply.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CompanyTypeModule } from './company-type/company-type.module';
     PanelModule,
     CompanyModule,
     CompanyTypeModule,
+    ApplyModule,
   ],
   controllers: [],
   providers: [],
