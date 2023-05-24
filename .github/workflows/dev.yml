@@ -29,11 +29,7 @@ jobs:
 
     - run: cp -R dist server
 
-    - name: copy package.json
-      uses: canastro/copy-file-action@master
-      with:
-        source: "package.json"
-        target: "server/package.json"
+    - run: cp package.json server
 
     - run: cp -R prisma server
 
@@ -47,6 +43,11 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           /usr/sbin/cloudlinux-selector stop --json --interpreter=nodejs --app-root=/home/pari0012/vivarecruitdev/
+          cd vivarecruitdev/
+          rm -rf dist/*
+          rm -rf node_modules/*
+          rm -rf prisma/*
+          rm -rf package.json
 
     - name: deploy file
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -70,7 +71,6 @@ jobs:
         script: |
           cd vivarecruitdev/
           source /home/pari0012/nodevenv/vivarecruitdev/16/bin/activate
-          rm -rf node_modules/*
           npm install
           npx prisma generate
           cd node_modules/.prisma/client/
