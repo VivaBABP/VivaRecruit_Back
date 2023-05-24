@@ -5,18 +5,15 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Express } from 'express';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 @Injectable()
 export class CvService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async uploadCv(file: Express.Multer.File, id: number): Promise<void> {
-    if (file.mimetype != 'application/pdf') {
-      throw new ForbiddenException('Format du fichier incorrect');
-    }
-    if (file.size > 20000000) {
-      throw new ForbiddenException('Fichier trop lourd');
-    }
+  async uploadCv(file: Express.Multer.File, id: number): Promise<string> {
+    if (!file) throw new BadRequestException('Aucun fichier envoyé');
+    console.log(file + ' pdf');
     await this.prisma.account.update({
       data: {
         cv: file.buffer,
@@ -25,6 +22,7 @@ export class CvService {
         id: id,
       },
     });
+    return 'Fichier uploadé avec succès';
   }
 
   async downloadCv(id: number): Promise<Buffer> {

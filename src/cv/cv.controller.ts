@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   StreamableFile,
   Param,
+  Header,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { Express } from 'express';
@@ -50,12 +51,14 @@ export class CvController {
   async uploadCv(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: { user: TokenPayload },
-  ): Promise<void> {
-    await this.cvService.uploadCv(file, req.user.sub);
+  ): Promise<string> {
+    return await this.cvService.uploadCv(file, req.user.sub);
   }
 
   @ApiOkResponse()
   @ApiBadRequestResponse()
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=CV.pdf')
   @Get(':idStudent')
   async DownloadCv(
     @Param('idStudent') idStudent: string,
