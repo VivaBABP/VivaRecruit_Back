@@ -39,6 +39,15 @@ export class InterestService {
 
   async addInterestToAccount(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
+    const interestQuery = await this.prisma.hasInterest.findFirst({
+      where: {
+        accountId: id,
+        interestsId: interest,
+      },
+    });
+    console.log();
+    if (interestQuery)
+      throw new BadRequestException('Cet intérêt est déjà lié au Compte');
     await this.prisma.hasInterest.create({
       data: {
         accountId: id,
@@ -51,13 +60,23 @@ export class InterestService {
     await this.verifyIfInterestExists(interest);
     await this.prisma.hasInterest.deleteMany({
       where: {
-        accountId: id,
-        interestsId: interest,
+        AND: {
+          accountId: id,
+          interestsId: interest,
+        },
       },
     });
   }
   async addInterestToPanel(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
+    const interestQuery = await this.prisma.panel.findFirst({
+      where: {
+        interestsId: interest,
+        id: id,
+      },
+    });
+    if (interestQuery)
+      throw new BadRequestException('Cet intérêt est déjà lié au stand');
     await this.prisma.panel.update({
       where: {
         id: id,
