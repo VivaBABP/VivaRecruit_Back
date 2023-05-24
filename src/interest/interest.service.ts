@@ -27,7 +27,7 @@ export class InterestService {
     return interestList;
   }
 
-  async findOne(id: number): Promise<GetInterestDto> {
+  async findInterest(id: number): Promise<GetInterestDto> {
     await this.verifyIfInterestExists(id);
     const interest = await this.prisma.interests.findFirst({
       where: {
@@ -54,6 +54,36 @@ export class InterestService {
         interestsId: interest,
       },
     });
+  }
+
+  async getInterestFromAccount(id: number): Promise<GetInterestDto[]> {
+    const query = await this.prisma.account.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!query) throw new BadRequestException("Ce compte n'existe pas");
+    const res = await this.prisma.hasInterest.findMany({
+      where: {
+        accountId: id,
+      },
+      select: {
+        idInterest: {
+          select: {
+            id: true,
+            labelInterest: true,
+          },
+        },
+      },
+    });
+    const liste: GetInterestDto[] = [];
+    res.forEach((e) => {
+      liste.push({
+        idInterest: e.idInterest.id,
+        labelInterest: e.idInterest.labelInterest,
+      });
+    });
+    return liste;
   }
 
   async removeInterestOfAccount(id: number, interest: number): Promise<void> {

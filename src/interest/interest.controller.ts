@@ -38,13 +38,6 @@ export class InterestController {
     return await this.interestService.findAll();
   }
 
-  @Get(':id')
-  @ApiOkResponse({ type: GetInterestDto })
-  @ApiBadRequestResponse()
-  async findOne(@Param('id') id: string): Promise<GetInterestDto> {
-    return await this.interestService.findOne(+id);
-  }
-
   @Post('account')
   @ApiOkResponse()
   @ApiBadRequestResponse()
@@ -56,6 +49,18 @@ export class InterestController {
       req.user.sub,
       idInterest.id,
     );
+  }
+
+  @Get('account')
+  @ApiOkResponse({
+    type: GetInterestDto,
+    isArray: true,
+  })
+  @ApiBadRequestResponse()
+  async getInterestFromAccount(
+    @Req() req: { user: TokenPayload },
+  ): Promise<GetInterestDto[]> {
+    return await this.interestService.getInterestFromAccount(req.user.sub);
   }
 
   @Delete('account')
@@ -90,5 +95,12 @@ export class InterestController {
       panel.idPanel,
       panel.idInterest,
     );
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: GetInterestDto })
+  @ApiBadRequestResponse()
+  async findInterest(@Param('id') id: string): Promise<GetInterestDto> {
+    return await this.interestService.findInterest(+id);
   }
 }
