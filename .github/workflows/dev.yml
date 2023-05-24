@@ -3,7 +3,7 @@ name: Deploy_Dev
 on:
   push:
     branches:
-    - develop
+    - fix/deleteDist
 
 jobs:        
 
