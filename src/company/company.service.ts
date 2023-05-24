@@ -7,6 +7,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCompanyDto } from './dto/get-company.dto';
+import { TokenPayload } from '../interfaces/token-payload.interface';
 
 @Injectable()
 export class CompanyService {
@@ -22,7 +23,14 @@ export class CompanyService {
       throw new BadRequestException("Cette entreprise n'existe pas");
   }
 
-  async create(createCompanyDto: CreateCompanyDto): Promise<void> {
+  async create(
+    createCompanyDto: CreateCompanyDto,
+    user: TokenPayload,
+  ): Promise<void> {
+    if (!user.role)
+      throw new ForbiddenException(
+        "Vous n'avez pas les droits pour créer une entreprise",
+      );
     await this.prisma.company.create({
       data: {
         companyName: createCompanyDto.companyName,
@@ -59,6 +67,43 @@ export class CompanyService {
       });
     });
     return companyDto;
+  }
+
+  async findOwnCompany(user: TokenPayload): Promise<GetCompanyDto> {
+    if (!user.role) {
+      throw new ForbiddenException(
+        "Vous n'avez pas les droits de faire cette requête",
+      );
+    }
+    const res = await this.prisma.panel.findFirst({
+      where: {
+        Account: {
+          every: {
+            id: user.sub,
+          },
+        },
+      },
+      select: {
+        company: {
+          select: {
+            id: true,
+            companyType: true,
+            websiteLink: true,
+            companyTypeId: true,
+            description: true,
+            lineOfBusiness: true,
+            companyName: true,
+          },
+        },
+      },
+    });
+    return {
+      companyName: res.company.companyName,
+      description: res.company.description,
+      websiteLink: res.company.websiteLink,
+      lineOfBusiness: res.company.lineOfBusiness,
+      companyTypeLabel: res.company.companyType.labelCompanyType,
+    };
   }
 
   async findOne(id: number): Promise<GetCompanyDto> {

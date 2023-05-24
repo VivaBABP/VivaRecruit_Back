@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import UpdateJobDTO from './dto/update-job.dto';
 import CreateJobDTO from './dto/create-jobs.dto';
+import GetJobsDTO from './dto/get-jobs.dto';
+import { job } from 'cron';
 
 @Injectable()
 export class JobsService {
@@ -56,17 +58,33 @@ export class JobsService {
     };
   }
 
-  async getJobs(): Promise<UpdateJobDTO[]> {
+  async getJobs(id: number): Promise<GetJobsDTO[]> {
+    const appliedJobs = await this.getAppliedJob(id);
     const jobs = await this.prisma.jobDescription.findMany();
-    const listJobs: UpdateJobDTO[] = [];
-    jobs.forEach((e) => {
-      listJobs.push({
-        jobId: e.id,
-        jobName: e.jobName,
-        jobDescription: e.jobDescription,
-        skillsNeeded: e.skills,
+    const listJobs: GetJobsDTO[] = [];
+    if (!appliedJobs) {
+      jobs.forEach((e) => {
+        listJobs.push({
+          jobId: e.id,
+          jobName: e.jobName,
+          jobDescription: e.jobDescription,
+          skillsNeeded: e.skills,
+          applied: false,
+        });
       });
-    });
+    } else {
+      jobs.forEach((e) => {
+        const applied = appliedJobs.find((a) => a.jobId == e.id);
+        console.log(applied);
+        listJobs.push({
+          jobId: e.id,
+          jobName: e.jobName,
+          jobDescription: e.jobDescription,
+          skillsNeeded: e.skills,
+          applied: applied != undefined,
+        });
+      });
+    }
     return listJobs;
   }
 

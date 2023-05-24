@@ -22,6 +22,7 @@ import { JwtGuard } from '../jwt/guards/jwt.guard';
 import { CreateApplyDto } from './dto/create-apply.dto';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import UpdateJobDTO from './dto/update-job.dto';
+import GetJobsDTO from './dto/get-jobs.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -49,24 +50,16 @@ export class JobsController {
     @Body() updateJob: UpdateJobDTO,
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
-    await this.jobsService.updateJob(updateJob, req.user.sub);
+    return await this.jobsService.updateJob(updateJob, req.user.sub);
   }
 
   @Get()
   @ApiOkResponse({
-    type: UpdateJobDTO,
+    type: GetJobsDTO,
     isArray: true,
   })
-  async getJobs(): Promise<UpdateJobDTO[]> {
-    return await this.jobsService.getJobs();
-  }
-
-  @Get(':id')
-  @ApiOkResponse({
-    type: UpdateJobDTO,
-  })
-  async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
-    return await this.jobsService.getJob(Number.parseInt(id));
+  async getJobs(@Req() req: { user: TokenPayload }): Promise<GetJobsDTO[]> {
+    return await this.jobsService.getJobs(req.user.sub);
   }
 
   @ApiOkResponse()
@@ -76,7 +69,7 @@ export class JobsController {
     @Body() applyJobDto: CreateApplyDto,
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
-    await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
+    return await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
   }
 
   @ApiOkResponse({
@@ -86,7 +79,7 @@ export class JobsController {
   @Get('applied')
   async getAppliedJobs(
     @Req() req: { user: TokenPayload },
-  ): Promise<CreateJobDTO[]> {
+  ): Promise<UpdateJobDTO[]> {
     return await this.jobsService.getAppliedJob(req.user.sub);
   }
 
@@ -96,9 +89,17 @@ export class JobsController {
     @Req() req: { user: TokenPayload },
     @Param('idJob') idJob: string,
   ): Promise<void> {
-    await this.jobsService.deleteAppliedJob(
+    return await this.jobsService.deleteAppliedJob(
       req.user.sub,
       Number.parseInt(idJob),
     );
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    type: UpdateJobDTO,
+  })
+  async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
+    return await this.jobsService.getJob(Number.parseInt(id));
   }
 }
