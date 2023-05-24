@@ -27,7 +27,7 @@ export class InterestService {
     return interestList;
   }
 
-  async findOne(id: number): Promise<GetInterestDto> {
+  async findInterest(id: number): Promise<GetInterestDto> {
     await this.verifyIfInterestExists(id);
     const interest = await this.prisma.interests.findFirst({
       where: {
@@ -39,6 +39,15 @@ export class InterestService {
 
   async addInterestToAccount(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
+    const interestQuery = await this.prisma.hasInterest.findFirst({
+      where: {
+        accountId: id,
+        interestsId: interest,
+      },
+    });
+    console.log();
+    if (interestQuery)
+      throw new BadRequestException('Cet intérêt est déjà lié au Compte');
     await this.prisma.hasInterest.create({
       data: {
         accountId: id,
@@ -47,17 +56,57 @@ export class InterestService {
     });
   }
 
+  async getInterestFromAccount(id: number): Promise<GetInterestDto[]> {
+    const query = await this.prisma.account.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!query) throw new BadRequestException("Ce compte n'existe pas");
+    const res = await this.prisma.hasInterest.findMany({
+      where: {
+        accountId: id,
+      },
+      select: {
+        idInterest: {
+          select: {
+            id: true,
+            labelInterest: true,
+          },
+        },
+      },
+    });
+    const liste: GetInterestDto[] = [];
+    res.forEach((e) => {
+      liste.push({
+        idInterest: e.idInterest.id,
+        labelInterest: e.idInterest.labelInterest,
+      });
+    });
+    return liste;
+  }
+
   async removeInterestOfAccount(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
     await this.prisma.hasInterest.deleteMany({
       where: {
-        accountId: id,
-        interestsId: interest,
+        AND: {
+          accountId: id,
+          interestsId: interest,
+        },
       },
     });
   }
   async addInterestToPanel(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
+    const interestQuery = await this.prisma.panel.findFirst({
+      where: {
+        interestsId: interest,
+        id: id,
+      },
+    });
+    if (interestQuery)
+      throw new BadRequestException('Cet intérêt est déjà lié au stand');
     await this.prisma.panel.update({
       where: {
         id: id,
