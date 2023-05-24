@@ -4,7 +4,7 @@ import { GetInterestDto } from './dto/get-interest.dto';
 
 @Injectable()
 export class InterestService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   private async verifyIfInterestExists(id: number): Promise<void> {
     const interest = await this.prisma.interests.findFirst({
@@ -14,6 +14,17 @@ export class InterestService {
     });
     if (!interest)
       throw new BadRequestException("L'intérêt séléctionné n'existe pas");
+  }
+ 
+  private async verifyIfInterestExistsForAccount(id: number, interest: number): Promise<void> {
+    const hasInterest = await this.prisma.hasInterest.findFirst({
+      where: {
+        accountId: id,
+        interestsId: interest,
+      },
+    });
+    if (hasInterest)
+      throw new BadRequestException("L'intérêt a déjà etait choisit");
   }
 
   async findAll(): Promise<GetInterestDto[]> {
@@ -39,6 +50,7 @@ export class InterestService {
 
   async addInterestToAccount(id: number, interest: number): Promise<void> {
     await this.verifyIfInterestExists(interest);
+    await this.verifyIfInterestExistsForAccount(id, interest);
     await this.prisma.hasInterest.create({
       data: {
         accountId: id,
