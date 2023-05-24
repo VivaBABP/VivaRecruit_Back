@@ -10,7 +10,8 @@ import { Express } from 'express';
 export class CvService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async uploadCv(file: Express.Multer.File, id: number): Promise<void> {
+  async uploadCv(file: Express.Multer.File, id: number): Promise<string> {
+    if (!file) throw new BadRequestException('Aucun fichier envoyé');
     if (file.mimetype != 'application/pdf') {
       throw new ForbiddenException('Format du fichier incorrect');
     }
@@ -25,6 +26,7 @@ export class CvService {
         id: id,
       },
     });
+    return 'Fichier uploadé avec succès';
   }
 
   async downloadCv(id: number): Promise<Buffer> {
