@@ -19,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from '../jwt/guards/jwt.guard';
-import { CreateApplyDto } from './dto/create-apply.dto';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import UpdateJobDTO from './dto/update-job.dto';
 import GetJobsDTO from './dto/get-jobs.dto';
@@ -60,38 +59,5 @@ export class JobsController {
   })
   async getJobs(@Req() req: { user: TokenPayload }): Promise<GetJobsDTO[]> {
     return await this.jobsService.getJobs(req.user.sub);
-  }
-
-  @ApiOkResponse()
-  @ApiBadRequestResponse()
-  @Post('apply')
-  async applyJob(
-    @Body() applyJobDto: CreateApplyDto,
-    @Req() req: { user: TokenPayload },
-  ): Promise<void> {
-    await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
-  }
-
-  @ApiOkResponse({
-    type: UpdateJobDTO,
-    isArray: true,
-  })
-  @Get('applied')
-  async getAppliedJobs(
-    @Req() req: { user: TokenPayload },
-  ): Promise<CreateJobDTO[]> {
-    return await this.jobsService.getAppliedJob(req.user.sub);
-  }
-
-  @Delete('applied/:idJob')
-  @ApiOkResponse()
-  async deleteAppliedJob(
-    @Req() req: { user: TokenPayload },
-    @Param('idJob') idJob: string,
-  ): Promise<void> {
-    await this.jobsService.deleteAppliedJob(
-      req.user.sub,
-      Number.parseInt(idJob),
-    );
   }
 }

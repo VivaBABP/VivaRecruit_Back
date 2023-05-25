@@ -9,6 +9,34 @@ import { job } from 'cron';
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async getAppliedJob(idAccount: number): Promise<UpdateJobDTO[]> {
+    const query = await this.prisma.applyJob.findMany({
+      where: {
+        idAccount: { id: idAccount },
+      },
+      select: {
+        idJob: {
+          select: {
+            jobName: true,
+            jobDescription: true,
+            skills: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const listeJobs: UpdateJobDTO[] = [];
+    query.forEach((e) => {
+      const job: UpdateJobDTO = {
+        jobId: e.idJob.id,
+        jobName: e.idJob.jobName,
+        jobDescription: e.idJob.jobDescription,
+        skillsNeeded: e.idJob.skills,
+      };
+      listeJobs.push(job);
+    });
+    return listeJobs;
+  }
   async createJob(createJob: CreateJobDTO, id: number): Promise<void> {
     await this.prisma.jobDescription.create({
       data: {
