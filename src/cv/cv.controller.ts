@@ -69,9 +69,9 @@ export class CvController {
     return new StreamableFile(pdf);
   }
 
-  @Get('exist/:id')
+  @Get('exist')
   @ApiOkResponse({ type: Boolean })
-  async exist(@Param('id') id: string): Promise<boolean> {
-    return await this.cvService.exist(+id);
+  async exist(@Req() req: { user: TokenPayload }): Promise<boolean> {
+    return await this.cvService.exist(req.user.sub);
   }
 }
