@@ -70,6 +70,7 @@ export class CvController {
   }
 
   @Get('exist')
+  @ApiBadRequestResponse()
   @ApiOkResponse({ type: Boolean })
   async exist(@Req() req: { user: TokenPayload }): Promise<boolean> {
     return await this.cvService.exist(req.user.sub);
