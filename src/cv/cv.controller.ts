@@ -54,6 +54,12 @@ export class CvController {
   ): Promise<string> {
     return await this.cvService.uploadCv(file, req.user.sub);
   }
+  @Get('exist')
+  @ApiBadRequestResponse()
+  @ApiOkResponse({ type: Boolean })
+  async exist(@Req() req: { user: TokenPayload }): Promise<boolean> {
+    return await this.cvService.exist(req.user.sub);
+  }
 
   @ApiOkResponse({
     type: StreamableFile,
@@ -67,12 +73,5 @@ export class CvController {
   ): Promise<StreamableFile> {
     const pdf = await this.cvService.downloadCv(+idStudent);
     return new StreamableFile(pdf);
-  }
-
-  @Get('exist')
-  @ApiBadRequestResponse()
-  @ApiOkResponse({ type: Boolean })
-  async exist(@Req() req: { user: TokenPayload }): Promise<boolean> {
-    return await this.cvService.exist(req.user.sub);
   }
 }
