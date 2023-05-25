@@ -37,7 +37,7 @@ export class CompanyController {
   async create(
     @Body() createCompanyDto: CreateCompanyDto,
     @Req() req: { user: TokenPayload },
-  ) {
+  ): Promise<void> {
     return await this.companyService.create(createCompanyDto, req.user);
   }
 

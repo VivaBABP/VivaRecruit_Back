@@ -16,5 +16,6 @@ export class CreateCompanyDto {
   lineOfBusiness: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   companyTypeId: number;
 }
