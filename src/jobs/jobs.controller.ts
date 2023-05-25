@@ -69,7 +69,7 @@ export class JobsController {
     @Body() applyJobDto: CreateApplyDto,
     @Req() req: { user: TokenPayload },
   ): Promise<void> {
-    return await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
+    await this.jobsService.applyJob(applyJobDto.idJob, req.user.sub);
   }
 
   @ApiOkResponse({
@@ -79,7 +79,7 @@ export class JobsController {
   @Get('applied')
   async getAppliedJobs(
     @Req() req: { user: TokenPayload },
-  ): Promise<UpdateJobDTO[]> {
+  ): Promise<CreateJobDTO[]> {
     return await this.jobsService.getAppliedJob(req.user.sub);
   }
 
@@ -89,17 +89,9 @@ export class JobsController {
     @Req() req: { user: TokenPayload },
     @Param('idJob') idJob: string,
   ): Promise<void> {
-    return await this.jobsService.deleteAppliedJob(
+    await this.jobsService.deleteAppliedJob(
       req.user.sub,
       Number.parseInt(idJob),
     );
-  }
-
-  @Get(':id')
-  @ApiOkResponse({
-    type: UpdateJobDTO,
-  })
-  async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
-    return await this.jobsService.getJob(Number.parseInt(id));
   }
 }
