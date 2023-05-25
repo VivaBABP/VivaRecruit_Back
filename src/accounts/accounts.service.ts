@@ -53,9 +53,6 @@ export class AccountsService {
       where: {
         hr: false,
         activate: true,
-        cv: {
-          not: null,
-        },
       },
     });
     return result as InformationStudentDTO[];
