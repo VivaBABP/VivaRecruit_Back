@@ -4,6 +4,10 @@ import { IsNotEmpty } from 'class-validator';
 export class GetCompanyDto {
   @ApiProperty()
   @IsNotEmpty()
+  idCompany: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   companyName: string;
 
   @ApiProperty()
@@ -14,6 +18,10 @@ export class GetCompanyDto {
 
   @ApiProperty()
   lineOfBusiness: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  idTypeCompany: number;
 
   @ApiProperty()
   companyTypeLabel: string;

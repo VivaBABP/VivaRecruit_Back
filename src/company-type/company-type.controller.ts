@@ -38,7 +38,7 @@ export class CompanyTypeController {
   async create(
     @Body() createCompanyTypeDto: CreateCompanyTypeDto,
     @Req() req: { user: TokenPayload },
-  ) {
+  ): Promise<void> {
     return await this.companyTypeService.create(
       createCompanyTypeDto,
       req.user.role,
@@ -47,7 +47,7 @@ export class CompanyTypeController {
 
   @Get()
   @ApiOkResponse({
-    type: GetPanelDto,
+    type: GetCompanyTypeDto,
     isArray: true,
   })
   @ApiForbiddenResponse()
@@ -58,7 +58,7 @@ export class CompanyTypeController {
 
   @Get(':id')
   @ApiOkResponse({
-    type: GetPanelDto,
+    type: GetCompanyTypeDto,
   })
   @ApiBadRequestResponse()
   @ApiForbiddenResponse()
@@ -74,7 +74,7 @@ export class CompanyTypeController {
     @Param('id') id: string,
     @Body() updateCompanyTypeDto: UpdateCompanyTypeDto,
     @Req() req: { user: TokenPayload },
-  ) {
+  ): Promise<void> {
     return this.companyTypeService.update(
       +id,
       updateCompanyTypeDto,
@@ -86,7 +86,10 @@ export class CompanyTypeController {
   @ApiOkResponse()
   @ApiBadRequestResponse()
   @ApiForbiddenResponse()
-  async remove(@Param('id') id: string, @Req() req: { user: TokenPayload }) {
+  async remove(
+    @Param('id') id: string,
+    @Req() req: { user: TokenPayload },
+  ): Promise<void> {
     return await this.companyTypeService.remove(+id, req.user.role);
   }
 }

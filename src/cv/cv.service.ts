@@ -10,7 +10,17 @@ import { Express } from 'express';
 export class CvService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async verifyIfUserExists(id: number): Promise<void> {
+    const query = await this.prisma.account.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!query) throw new BadRequestException("Ce compte n'existe pas");
+  }
+
   async uploadCv(file: Express.Multer.File, id: number): Promise<string> {
+    await this.verifyIfUserExists(id);
     if (!file) throw new BadRequestException('Aucun fichier envoyé');
     if (file.mimetype != 'application/pdf') {
       throw new ForbiddenException('Format du fichier incorrect');
@@ -30,6 +40,7 @@ export class CvService {
   }
 
   async downloadCv(id: number): Promise<Buffer> {
+    await this.verifyIfUserExists(id);
     const result = await this.prisma.account.findFirst({
       select: {
         cv: true,
@@ -43,5 +54,18 @@ export class CvService {
     if (!result.cv) throw new BadRequestException('Aucun CV trouvé');
 
     return result.cv;
+  }
+
+  async exist(id: number): Promise<boolean> {
+    await this.verifyIfUserExists(id);
+    const query = await this.prisma.account.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        cv: true,
+      },
+    });
+    return !!query.cv;
   }
 }

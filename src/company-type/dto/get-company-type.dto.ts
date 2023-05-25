@@ -5,4 +5,8 @@ export class GetCompanyTypeDto {
   @ApiProperty()
   @IsNotEmpty()
   companyTypeLabel: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  idCompanyType: number;
 }

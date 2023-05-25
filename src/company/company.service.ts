@@ -45,12 +45,14 @@ export class CompanyService {
   async findAll(): Promise<GetCompanyDto[]> {
     const companies = await this.prisma.company.findMany({
       select: {
+        id: true,
         companyName: true,
         description: true,
         websiteLink: true,
         lineOfBusiness: true,
         companyType: {
           select: {
+            id: true,
             labelCompanyType: true,
           },
         },
@@ -59,10 +61,12 @@ export class CompanyService {
     const companyDto: GetCompanyDto[] = [];
     companies.forEach((e) => {
       companyDto.push({
+        idCompany: e.id,
         companyName: e.companyName,
         description: e.description,
         websiteLink: e.websiteLink,
         lineOfBusiness: e.lineOfBusiness,
+        idTypeCompany: e.companyType.id,
         companyTypeLabel: e.companyType.labelCompanyType,
       });
     });
@@ -98,10 +102,12 @@ export class CompanyService {
       },
     });
     return {
+      idCompany: res.company.id,
       companyName: res.company.companyName,
       description: res.company.description,
       websiteLink: res.company.websiteLink,
       lineOfBusiness: res.company.lineOfBusiness,
+      idTypeCompany: res.company.companyType.id,
       companyTypeLabel: res.company.companyType.labelCompanyType,
     };
   }
@@ -116,6 +122,7 @@ export class CompanyService {
         lineOfBusiness: true,
         companyType: {
           select: {
+            id: true,
             labelCompanyType: true,
           },
         },
@@ -126,10 +133,12 @@ export class CompanyService {
     });
     let companyDto: GetCompanyDto = null;
     companyDto = {
+      idCompany: id,
       companyName: company.companyName,
       description: company.description,
       websiteLink: company.websiteLink,
       lineOfBusiness: company.lineOfBusiness,
+      idTypeCompany: company.companyType.id,
       companyTypeLabel: company.companyType.labelCompanyType,
     };
     return companyDto;

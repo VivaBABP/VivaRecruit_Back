@@ -51,11 +51,13 @@ export class CompanyTypeService {
     const companyTypes = await this.prisma.companyType.findMany({
       select: {
         labelCompanyType: true,
+        id: true,
       },
     });
     const companyTypeDto: GetCompanyTypeDto[] = [];
     companyTypes.forEach((e) => {
       companyTypeDto.push({
+        idCompanyType: e.id,
         companyTypeLabel: e.labelCompanyType,
       });
     });
@@ -67,6 +69,7 @@ export class CompanyTypeService {
     const companyType = await this.prisma.companyType.findFirst({
       select: {
         labelCompanyType: true,
+        id: true,
       },
       where: {
         id: id,
@@ -74,6 +77,7 @@ export class CompanyTypeService {
     });
     let companyTypeDto: GetCompanyTypeDto = null;
     companyTypeDto = {
+      idCompanyType: companyType.id,
       companyTypeLabel: companyType.labelCompanyType,
     };
     return companyTypeDto;

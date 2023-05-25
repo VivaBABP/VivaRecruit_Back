@@ -68,4 +68,10 @@ export class CvController {
     const pdf = await this.cvService.downloadCv(+idStudent);
     return new StreamableFile(pdf);
   }
+
+  @Get('exist/:id')
+  @ApiOkResponse({ type: Boolean })
+  async exist(@Param('id') id: string): Promise<boolean> {
+    return await this.cvService.exist(+id);
+  }
 }
