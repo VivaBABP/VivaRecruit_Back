@@ -250,22 +250,4 @@ export class AuthService {
       },
     });
   }
-
-  @Cron(CronExpression.EVERY_12_HOURS)
-  async deleteDesactivateAccount(): Promise<void> {
-    const users = await this.prisma.account.findMany();
-
-    users.forEach(async (u) => {
-      const userDate = dayjs(u.createdAt).startOf('day');
-      const today = dayjs().startOf('day');
-
-      if (today > userDate && !u.activate) {
-        await this.prisma.account.delete({
-          where: {
-            id: u.id,
-          },
-        });
-      }
-    });
-  }
 }

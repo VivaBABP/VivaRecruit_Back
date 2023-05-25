@@ -44,6 +44,7 @@ export class JobsService {
   }
 
   async getJob(idJob: number): Promise<UpdateJobDTO> {
+    console.log(idJob);
     await this.verifyIfJobExist(idJob);
     const job = await this.prisma.jobDescription.findFirst({
       where: {
@@ -60,7 +61,19 @@ export class JobsService {
 
   async getJobs(id: number): Promise<GetJobsDTO[]> {
     const appliedJobs = await this.getAppliedJob(id);
-    const jobs = await this.prisma.jobDescription.findMany();
+    const jobs = await this.prisma.jobDescription.findMany({
+      select: {
+        id: true,
+        skills: true,
+        jobDescription: true,
+        jobName: true,
+        account: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
     const listJobs: GetJobsDTO[] = [];
     if (!appliedJobs) {
       jobs.forEach((e) => {
@@ -70,18 +83,19 @@ export class JobsService {
           jobDescription: e.jobDescription,
           skillsNeeded: e.skills,
           applied: false,
+          email: e.account.email,
         });
       });
     } else {
       jobs.forEach((e) => {
         const applied = appliedJobs.find((a) => a.jobId == e.id);
-        console.log(applied);
         listJobs.push({
           jobId: e.id,
           jobName: e.jobName,
           jobDescription: e.jobDescription,
           skillsNeeded: e.skills,
           applied: applied != undefined,
+          email: e.account.email,
         });
       });
     }

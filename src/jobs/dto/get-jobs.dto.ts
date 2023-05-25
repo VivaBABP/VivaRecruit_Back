@@ -20,4 +20,8 @@ export default class GetJobsDTO {
   @ApiProperty()
   @IsNotEmpty()
   applied: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
 }
