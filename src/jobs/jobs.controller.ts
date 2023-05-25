@@ -19,9 +19,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from '../jwt/guards/jwt.guard';
-import { CreateApplyDto } from '../apply/dto/create-apply.dto';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import UpdateJobDTO from './dto/update-job.dto';
+import GetJobsDTO from './dto/get-jobs.dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -54,18 +54,10 @@ export class JobsController {
 
   @Get()
   @ApiOkResponse({
-    type: UpdateJobDTO,
+    type: GetJobsDTO,
     isArray: true,
   })
-  async getJobs(): Promise<UpdateJobDTO[]> {
-    return await this.jobsService.getJobs();
-  }
-
-  @Get(':id')
-  @ApiOkResponse({
-    type: UpdateJobDTO,
-  })
-  async getJob(@Param('id') id: string): Promise<UpdateJobDTO> {
-    return await this.jobsService.getJob(Number.parseInt(id));
+  async getJobs(@Req() req: { user: TokenPayload }): Promise<GetJobsDTO[]> {
+    return await this.jobsService.getJobs(req.user.sub);
   }
 }

@@ -2,11 +2,41 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import UpdateJobDTO from './dto/update-job.dto';
 import CreateJobDTO from './dto/create-jobs.dto';
+import GetJobsDTO from './dto/get-jobs.dto';
+import { job } from 'cron';
 
 @Injectable()
 export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async getAppliedJob(idAccount: number): Promise<UpdateJobDTO[]> {
+    const query = await this.prisma.applyJob.findMany({
+      where: {
+        idAccount: { id: idAccount },
+      },
+      select: {
+        idJob: {
+          select: {
+            jobName: true,
+            jobDescription: true,
+            skills: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const listeJobs: UpdateJobDTO[] = [];
+    query.forEach((e) => {
+      const job: UpdateJobDTO = {
+        jobId: e.idJob.id,
+        jobName: e.idJob.jobName,
+        jobDescription: e.idJob.jobDescription,
+        skillsNeeded: e.idJob.skills,
+      };
+      listeJobs.push(job);
+    });
+    return listeJobs;
+  }
   async createJob(createJob: CreateJobDTO, id: number): Promise<void> {
     await this.prisma.jobDescription.create({
       data: {
@@ -42,6 +72,7 @@ export class JobsService {
   }
 
   async getJob(idJob: number): Promise<UpdateJobDTO> {
+    console.log(idJob);
     await this.verifyIfJobExist(idJob);
     const job = await this.prisma.jobDescription.findFirst({
       where: {
@@ -56,17 +87,46 @@ export class JobsService {
     };
   }
 
-  async getJobs(): Promise<UpdateJobDTO[]> {
-    const jobs = await this.prisma.jobDescription.findMany();
-    const listJobs: UpdateJobDTO[] = [];
-    jobs.forEach((e) => {
-      listJobs.push({
-        jobId: e.id,
-        jobName: e.jobName,
-        jobDescription: e.jobDescription,
-        skillsNeeded: e.skills,
-      });
+  async getJobs(id: number): Promise<GetJobsDTO[]> {
+    const appliedJobs = await this.getAppliedJob(id);
+    const jobs = await this.prisma.jobDescription.findMany({
+      select: {
+        id: true,
+        skills: true,
+        jobDescription: true,
+        jobName: true,
+        account: {
+          select: {
+            email: true,
+          },
+        },
+      },
     });
+    const listJobs: GetJobsDTO[] = [];
+    if (!appliedJobs) {
+      jobs.forEach((e) => {
+        listJobs.push({
+          jobId: e.id,
+          jobName: e.jobName,
+          jobDescription: e.jobDescription,
+          skillsNeeded: e.skills,
+          applied: false,
+          email: e.account.email,
+        });
+      });
+    } else {
+      jobs.forEach((e) => {
+        const applied = appliedJobs.find((a) => a.jobId == e.id);
+        listJobs.push({
+          jobId: e.id,
+          jobName: e.jobName,
+          jobDescription: e.jobDescription,
+          skillsNeeded: e.skills,
+          applied: applied != undefined,
+          email: e.account.email,
+        });
+      });
+    }
     return listJobs;
   }
 

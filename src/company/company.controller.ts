@@ -34,8 +34,11 @@ export class CompanyController {
   @ApiOkResponse()
   @ApiForbiddenResponse()
   @ApiBadRequestResponse()
-  async create(@Body() createCompanyDto: CreateCompanyDto) {
-    return await this.companyService.create(createCompanyDto);
+  async create(
+    @Body() createCompanyDto: CreateCompanyDto,
+    @Req() req: { user: TokenPayload },
+  ): Promise<void> {
+    return await this.companyService.create(createCompanyDto, req.user);
   }
 
   @Get()
@@ -47,6 +50,17 @@ export class CompanyController {
   @ApiBadRequestResponse()
   async findAll(): Promise<GetCompanyDto[]> {
     return await this.companyService.findAll();
+  }
+
+  @Get('idUser')
+  @ApiOkResponse({
+    type: GetCompanyDto,
+  })
+  @ApiBadRequestResponse()
+  async getOwnCompany(
+    @Req() req: { user: TokenPayload },
+  ): Promise<GetCompanyDto> {
+    return await this.companyService.findOwnCompany(req.user);
   }
 
   @Get(':id')

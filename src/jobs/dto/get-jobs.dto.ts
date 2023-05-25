@@ -1,28 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class GetCompanyDto {
+export default class GetJobsDTO {
   @ApiProperty()
   @IsNotEmpty()
-  idCompany: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  companyName: string;
-
-  @ApiProperty()
-  description: string;
-
-  @ApiProperty()
-  websiteLink: string;
-
-  @ApiProperty()
-  lineOfBusiness: string;
+  jobId: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  idTypeCompany: number;
+  jobName: string;
 
   @ApiProperty()
-  companyTypeLabel: string;
+  @IsNotEmpty()
+  jobDescription: string;
+
+  @ApiProperty()
+  skillsNeeded?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  applied: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
 }

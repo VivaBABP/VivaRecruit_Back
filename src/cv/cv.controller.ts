@@ -54,6 +54,18 @@ export class CvController {
   ): Promise<string> {
     return await this.cvService.uploadCv(file, req.user.sub);
   }
+  @Get('exist')
+  @ApiBadRequestResponse()
+  @ApiOkResponse({ type: Boolean })
+  async exist(@Req() req: { user: TokenPayload }): Promise<boolean> {
+    return await this.cvService.exist(req.user.sub);
+  }
+  @Get('exist/:id')
+  @ApiBadRequestResponse()
+  @ApiOkResponse({ type: Boolean })
+  async existFromUser(@Param('id') id: string): Promise<boolean> {
+    return await this.cvService.exist(+id);
+  }
 
   @ApiOkResponse({
     type: StreamableFile,
